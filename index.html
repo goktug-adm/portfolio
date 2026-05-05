@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Göktuğ Arda Gök — Mechatronics Portfolio</title>
+  <meta name="description" content="Mechatronics engineering portfolio: spherical robotics, vision-based control, machine learning, drone swarms, PLC automation and CAD." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="hero">
+    <div class="container">
+      <p class="eyebrow">Mechatronics Engineering · Sabancı University</p>
+      <h1>Göktuğ Arda Gök</h1>
+      <p class="tagline">
+        I build systems that sense, decide and move — from a drift-compensated
+        spherical robot to vision-based orientation tracking, drone swarm
+        simulations and PLC-driven factory cells. Selected reports from
+        coursework, a graduation project and a defense-industry internship.
+      </p>
+      <ul class="meta">
+        <li><span>Focus</span> Robotics · Controls · Vision</li>
+        <li><span>Tools</span> MATLAB/Simulink · Python · ROS 2 · TwinCAT · SolidWorks</li>
+        <li><span>Email</span> <a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="filter" aria-label="Filter projects by category">
+      <button class="chip is-active" data-filter="all">All</button>
+      <button class="chip" data-filter="robotics">Robotics &amp; Vision</button>
+      <button class="chip" data-filter="controls">Controls &amp; Dynamics</button>
+      <button class="chip" data-filter="mechatronics">Mechatronics &amp; PLC</button>
+      <button class="chip" data-filter="ml">Machine Learning</button>
+      <button class="chip" data-filter="cad">CAD &amp; Manufacturing</button>
+      <button class="chip" data-filter="other">Other</button>
+    </nav>
+
+    <section class="grid" id="grid"></section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <p>© <span id="year"></span> Göktuğ Arda Gök · Sabancı University, Mechatronics Engineering. Reports remain © their respective authors.</p>
+    </div>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const grid = document.getElementById('grid');
+    const cards = window.PROJECTS.map(p => {
+      const cover = `images/${p.slug}/page-1.jpg`;
+      const tagsHtml = p.tags.slice(0, 4).map(t => `<li>${t}</li>`).join('');
+      const featured = p.featured ? ' card--featured' : '';
+      const tagsAttr = p.categories.join(' ');
+      return `
+        <a class="card${featured}" href="project.html?slug=${encodeURIComponent(p.slug)}" data-tags="${tagsAttr}">
+          <div class="card__cover"><img src="${cover}" alt="" loading="lazy"></div>
+          <div class="card__body">
+            <div class="card__head">
+              <span class="badge ${p.badgeClass}">${p.badge}</span>
+              <span class="course">${p.course}</span>
+            </div>
+            <h2>${p.title}</h2>
+            <p>${p.summary}</p>
+            <ul class="tags">${tagsHtml}</ul>
+          </div>
+        </a>`;
+    }).join('');
+    grid.innerHTML = cards;
+
+    const chips = document.querySelectorAll('.chip');
+    const cardEls = grid.querySelectorAll('.card');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('is-active'));
+        chip.classList.add('is-active');
+        const f = chip.dataset.filter;
+        cardEls.forEach(card => {
+          const tags = card.dataset.tags.split(' ');
+          card.style.display = (f === 'all' || tags.includes(f)) ? '' : 'none';
+        });
+      });
+    });
+  </script>
+</body>
+</html>

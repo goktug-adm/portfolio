@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project — Göktuğ Arda Gök</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="detail-hero">
+    <div class="container container--wide">
+      <p class="crumb">
+        <a href="index.html">← Portfolio</a>
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M7 5l5 5-5 5V5z"/></svg>
+        <span id="crumb-title">Project</span>
+      </p>
+      <span class="badge" id="d-badge"></span>
+      <h1 id="d-title">…</h1>
+      <ul class="detail-meta" id="d-meta"></ul>
+      <div class="detail-actions" id="d-actions"></div>
+    </div>
+  </header>
+
+  <main class="container container--wide detail-body">
+    <article class="prose" id="d-prose"></article>
+
+    <aside class="sidebar" id="d-sidebar"></aside>
+  </main>
+
+  <section class="container container--wide" style="padding-bottom:60px">
+    <h2 style="font-size:18px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:8px 0 14px">Pages from the report</h2>
+    <div class="gallery" id="d-gallery"></div>
+    <div class="next-prev" id="d-nav"></div>
+  </section>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="nav prev" id="lb-prev" aria-label="Previous">‹</button>
+    <img id="lb-img" alt="" />
+    <button class="nav next" id="lb-next" aria-label="Next">›</button>
+    <button id="lb-close" aria-label="Close">×</button>
+  </div>
+
+  <footer>
+    <div class="container container--wide">
+      <p>© <span id="year"></span> Göktuğ Arda Gök · Reports remain © their respective authors.</p>
+    </div>
+  </footer>
+
+  <script src="projects.js"></script>
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    const params = new URLSearchParams(location.search);
+    const slug = params.get('slug');
+    const project = window.PROJECTS.find(p => p.slug === slug) || window.PROJECTS[0];
+    const idx = window.PROJECTS.indexOf(project);
+
+    document.title = `${project.title} — Göktuğ Arda Gök`;
+    document.getElementById('crumb-title').textContent = project.title;
+    document.getElementById('d-title').textContent = project.title;
+
+    const badgeEl = document.getElementById('d-badge');
+    badgeEl.className = 'badge ' + project.badgeClass;
+    badgeEl.textContent = project.badge;
+
+    const meta = [`<li>${project.course}</li>`, `<li>${project.date}</li>`];
+    if (project.collaborators) meta.push(`<li>With ${project.collaborators}</li>`);
+    if (project.supervisor)    meta.push(`<li>Supervisor: ${project.supervisor}</li>`);
+    document.getElementById('d-meta').innerHTML = meta.join('');
+
+    document.getElementById('d-actions').innerHTML = `
+      <a class="btn btn--primary" href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">📄 Open the PDF report</a>
+      <a class="btn" href="index.html">← All projects</a>
+    `;
+
+    document.getElementById('d-prose').innerHTML = project.sections
+      .map(s => `<h2>${s.h}</h2>${s.b}`).join('');
+
+    document.getElementById('d-sidebar').innerHTML = `
+      <h3>Course</h3><p>${project.course}</p>
+      <h3>Date</h3><p>${project.date}</p>
+      ${project.collaborators ? `<h3>Collaborators</h3><p>${project.collaborators}</p>` : ''}
+      ${project.supervisor    ? `<h3>Supervisor</h3><p>${project.supervisor}</p>` : ''}
+      <h3>Tags</h3>
+      <ul class="tags">${project.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+      <h3 style="margin-top:18px">Source</h3>
+      <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
+    `;
+
+    // Gallery
+    const gallery = document.getElementById('d-gallery');
+    const imgs = [];
+    for (let i = 1; i <= project.images; i++) {
+      imgs.push(`images/${project.slug}/page-${i}.jpg`);
+    }
+    gallery.innerHTML = imgs.map((src, i) => `
+      <button data-idx="${i}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
+    `).join('');
+
+    // Lightbox
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lb-img');
+    let curIdx = 0;
+    function openLB(i) {
+      curIdx = i;
+      lbImg.src = imgs[i];
+      lb.classList.add('is-open');
+    }
+    function closeLB() { lb.classList.remove('is-open'); }
+    function nav(d) { curIdx = (curIdx + d + imgs.length) % imgs.length; lbImg.src = imgs[curIdx]; }
+
+    gallery.querySelectorAll('button').forEach(b => b.addEventListener('click', () => openLB(+b.dataset.idx)));
+    document.getElementById('lb-close').addEventListener('click', closeLB);
+    document.getElementById('lb-prev').addEventListener('click', () => nav(-1));
+    document.getElementById('lb-next').addEventListener('click', () => nav(+1));
+    lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+    document.addEventListener('keydown', e => {
+      if (!lb.classList.contains('is-open')) return;
+      if (e.key === 'Escape') closeLB();
+      if (e.key === 'ArrowLeft') nav(-1);
+      if (e.key === 'ArrowRight') nav(+1);
+    });
+
+    // Prev/next project
+    const prev = window.PROJECTS[(idx - 1 + window.PROJECTS.length) % window.PROJECTS.length];
+    const next = window.PROJECTS[(idx + 1) % window.PROJECTS.length];
+    document.getElementById('d-nav').innerHTML = `
+      <a href="project.html?slug=${encodeURIComponent(prev.slug)}">
+        <p class="label">← Previous</p>
+        <p class="ttl">${prev.title}</p>
+      </a>
+      <a class="next" href="project.html?slug=${encodeURIComponent(next.slug)}">
+        <p class="label">Next →</p>
+        <p class="ttl">${next.title}</p>
+      </a>
+    `;
+  </script>
+</body>
+</html>
