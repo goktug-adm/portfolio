@@ -19,17 +19,20 @@ automation labs, CAD assemblies and an entrepreneurship business plan.
 - **Beckhoff / TwinCAT PLC labs**, a **2-DOF cascaded controller**, a **6-DOF
   quadrotor**, a full **V12 SolidWorks assembly**, and more.
 
-## Project structure
+## File structure
 
 ```
 portfolio/
-├── index.html        # cards grid + filter chips
-├── project.html      # single-project detail page (driven by ?slug=)
-├── projects.js       # all project metadata + section copy
-├── styles.css        # one stylesheet for both pages
-├── images/           # rendered page thumbnails per project
-│   └── <slug>/page-001.jpg ... page-006.jpg
-├── pdfs/             # original PDF reports
+├── index.html         ← grid + filter chips (cards)
+├── project.html       ← detail page, driven by ?slug=…
+├── picker.html        ← image picker (editing tool)
+├── projects.js        ← all project metadata + section copy
+├── selections.js      ← per-project picked images
+├── image-index.js     ← list of every figure / page render available
+├── styles.css         ← single stylesheet
+├── images/<slug>/     ← full-page renders (page-N.jpg)
+├── figures/<slug>/    ← embedded figures from the PDFs (fig-…jpg)
+├── pdfs/              ← original PDF reports
 └── README.md
 ```
 
@@ -37,11 +40,69 @@ portfolio/
 in `projects.js`, so adding a project means adding one object — no template
 duplication.
 
+## How to edit
+
+### Edit text (titles, summaries, sections)
+
+Open **`projects.js`**. Each project is one object with these fields:
+
+```js
+{
+  slug: "spherical-graduation",      // URL slug, do not change after release
+  title: "…",                        // shown on card + detail page
+  course: "ENS 491-492 · Graduation Project",
+  date:  "2026",
+  badge: "Graduation Project",
+  badgeClass: "badge--robotics",     // colours the pill (see styles.css)
+  categories: ["robotics","controls"], // for the filter chips on index
+  featured: true,                    // makes the card span 2 columns
+  pdf: "pdfs/<filename>.pdf",        // download link
+  collaborators: "Ömür Kaan Sarı",
+  supervisor:    "Volkan Patoğlu",
+  summary: "Card summary (1–2 sentences).",
+  tags: ["AprilTag", "Simulink", …],
+  sections: [                        // detail-page body
+    { h: "Section heading", b: "<p>HTML body…</p>" },
+    …
+  ]
+}
+```
+
+Save, commit, push — the live site updates within 30–60 seconds via
+GitHub Pages.
+
+### Pick which images appear
+
+1. Open **`picker.html`** in your browser (locally, by double-clicking, or via
+   the live site).
+2. Each project shows every available image — both **figures** (extracted from
+   inside the PDF) and **page** renders (full-page screenshots). Click to
+   tick/untick.
+3. Click **⬇ Download selections.js** at the top.
+4. Replace the `selections.js` file in this repo with the downloaded one.
+5. Commit & push.
+
+The detail page priority order is: `selections.js` → all extracted figures →
+page renders. So if you don't pick anything, you still get sensible defaults.
+
+### Re-extract images from a new PDF
+
+The originals live in `pdfs/`. Re-run extraction whenever you change them:
+
+```powershell
+# from the portfolio/ folder, with Poppler on PATH
+pdftoppm -r 110 -jpeg -f 1 -l 12 pdfs/MyReport.pdf images/<slug>/page
+pdfimages -j -p pdfs/MyReport.pdf figures/<slug>/fig
+```
+
+Then regenerate `image-index.js` (or just open `picker.html` after refreshing —
+the index is generated from the file system).
+
 ## Stack
 
-- Plain HTML / CSS / vanilla JS (no build step, no framework)
+- Plain HTML / CSS / vanilla JS — no build step, no framework
 - Page thumbnails rendered with [Poppler](https://poppler.freedesktop.org/)'s
-  `pdftoppm`
+  `pdftoppm`; figures with `pdfimages -j`
 - Hosted on GitHub Pages
 
 ## Contact

@@ -27,8 +27,8 @@
     <aside class="sidebar" id="d-sidebar"></aside>
   </main>
 
-  <section class="container container--wide" style="padding-bottom:60px">
-    <h2 style="font-size:18px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin:8px 0 14px">Pages from the report</h2>
+  <section class="container container--wide gallery-section" style="padding-bottom:60px">
+    <h2>Figures from the report</h2>
     <div class="gallery" id="d-gallery"></div>
     <div class="next-prev" id="d-nav"></div>
   </section>
@@ -47,6 +47,8 @@
   </footer>
 
   <script src="projects.js"></script>
+  <script src="image-index.js"></script>
+  <script src="selections.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
@@ -87,14 +89,21 @@
       <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
     `;
 
-    // Gallery
+    // Gallery: prefer user-picked images from selections.js;
+    // fall back to all extracted figures from image-index.js;
+    // last resort: page renders.
     const gallery = document.getElementById('d-gallery');
-    const imgs = [];
-    for (let i = 1; i <= project.images; i++) {
-      imgs.push(`images/${project.slug}/page-${i}.jpg`);
+    const idx = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug) || { figures: [], pages: [] };
+    const picked = (window.SELECTIONS || {})[project.slug];
+    let imgs;
+    if (picked && picked.length) imgs = picked;
+    else if (idx.figures.length) imgs = idx.figures;
+    else imgs = idx.pages.slice(0, 8);
+    if (!imgs.length) {
+      gallery.parentElement.style.display = 'none';
     }
     gallery.innerHTML = imgs.map((src, i) => `
-      <button data-idx="${i}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
+      <button data-idx="${i}"><img src="${src}" alt="Figure ${i + 1}" loading="lazy"></button>
     `).join('');
 
     // Lightbox

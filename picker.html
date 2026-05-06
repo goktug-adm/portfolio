@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Image Picker — Portfolio</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .picker-toolbar {
+      position: sticky; top: 0; z-index: 10;
+      background: rgba(11,13,18,.92); backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    }
+    .picker-stats { color: var(--muted); font-size: 13px; margin-left: auto; }
+    .picker-section { padding: 28px 0; border-bottom: 1px solid var(--border); }
+    .picker-section h2 {
+      font-size: 18px; margin: 0 0 6px;
+      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+    }
+    .picker-section .slug { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted); }
+    .picker-section .count { font-size: 12px; color: var(--accent); }
+    .picker-controls { display: flex; gap: 8px; margin: 8px 0 14px; }
+    .picker-controls button {
+      font-size: 12px; padding: 6px 12px; border-radius: 8px;
+      background: var(--panel); color: var(--muted);
+      border: 1px solid var(--border); cursor: pointer;
+      font-family: inherit;
+    }
+    .picker-controls button:hover { color: var(--text); border-color: rgba(122,162,255,.45); }
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .picker-tile {
+      position: relative;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      background: #0a0c12;
+      transition: border-color .15s ease, transform .15s ease;
+    }
+    .picker-tile:hover { transform: translateY(-2px); border-color: rgba(122,162,255,.45); }
+    .picker-tile.is-selected {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(122,162,255,.18);
+    }
+    .picker-tile img {
+      width: 100%; height: 160px; object-fit: contain;
+      background: #0e1219; display: block;
+    }
+    .picker-tile .meta {
+      padding: 6px 8px;
+      font-size: 11px;
+      color: var(--muted);
+      font-family: ui-monospace, Menlo, Consolas, monospace;
+      display: flex; justify-content: space-between;
+      border-top: 1px solid var(--border);
+    }
+    .picker-tile .meta .kind { color: var(--accent); font-weight: 600; }
+    .picker-tile .badge-check {
+      position: absolute; top: 8px; right: 8px;
+      width: 24px; height: 24px;
+      border-radius: 50%;
+      background: rgba(11,13,18,.85);
+      border: 1.5px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      color: transparent; font-weight: 700;
+      transition: all .15s ease;
+    }
+    .picker-tile.is-selected .badge-check {
+      background: var(--accent); border-color: var(--accent); color: #0b0d12;
+    }
+    .picker-tile.is-selected .badge-check::after { content: "✓"; }
+    .picker-jump {
+      display: flex; flex-wrap: wrap; gap: 6px;
+      margin: 16px 0 0;
+      font-size: 12px;
+    }
+    .picker-jump a {
+      padding: 4px 10px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+    }
+    .picker-jump a:hover { color: var(--text); border-color: rgba(122,162,255,.45); text-decoration: none; }
+  </style>
+</head>
+<body>
+  <header class="hero" style="padding: 48px 0 28px">
+    <div class="container container--wide">
+      <p class="eyebrow">Editing Tool</p>
+      <h1 style="font-size: 36px; margin-bottom: 8px">Image Picker</h1>
+      <p class="tagline" style="margin-bottom: 12px">
+        Tick the images you want shown on each project page. Click
+        <strong>Download</strong>, replace <code>selections.js</code> in the
+        repo, push to GitHub. The site auto-updates.
+      </p>
+    </div>
+  </header>
+
+  <div class="picker-toolbar">
+    <div class="container container--wide" style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap; width: 100%">
+      <button class="btn btn--primary" id="dl">⬇ Download selections.js</button>
+      <button class="btn" id="copy">📋 Copy to clipboard</button>
+      <button class="btn" id="loadCurrent">↻ Load current selections</button>
+      <button class="btn" id="clearAll">✕ Clear all</button>
+      <span class="picker-stats" id="stats">0 selected across 0 projects</span>
+    </div>
+  </div>
+
+  <main class="container container--wide">
+    <nav class="picker-jump" id="jump"></nav>
+    <div id="sections"></div>
+  </main>
+
+  <script src="projects.js"></script>
+  <script src="image-index.js"></script>
+  <script src="selections.js"></script>
+  <script>
+    const state = {}; // { slug: Set<path> }
+
+    // Init from current selections.js
+    function loadCurrent() {
+      Object.keys(state).forEach(k => state[k] = new Set());
+      const cur = window.SELECTIONS || {};
+      for (const slug in cur) {
+        state[slug] = new Set(cur[slug]);
+      }
+      render();
+    }
+
+    function clearAll() {
+      Object.keys(state).forEach(k => state[k] = new Set());
+      render();
+    }
+
+    function selectAll(slug) {
+      const idx = window.IMAGE_INDEX.find(p => p.slug === slug);
+      if (!idx) return;
+      state[slug] = new Set([...idx.figures, ...idx.pages]);
+      render();
+    }
+    function selectFigures(slug) {
+      const idx = window.IMAGE_INDEX.find(p => p.slug === slug);
+      if (!idx) return;
+      state[slug] = new Set(idx.figures);
+      render();
+    }
+    function selectNone(slug) {
+      state[slug] = new Set();
+      render();
+    }
+
+    function toggle(slug, path) {
+      if (!state[slug]) state[slug] = new Set();
+      if (state[slug].has(path)) state[slug].delete(path);
+      else state[slug].add(path);
+      render();
+    }
+
+    function render() {
+      // Stats
+      let totalSel = 0, projWith = 0;
+      for (const slug in state) {
+        if (state[slug] && state[slug].size > 0) {
+          totalSel += state[slug].size;
+          projWith++;
+        }
+      }
+      document.getElementById('stats').textContent = `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+
+      // Sections
+      const projects = window.PROJECTS;
+      const html = projects.map(p => {
+        const idx = window.IMAGE_INDEX.find(x => x.slug === p.slug) || { figures: [], pages: [] };
+        const selected = state[p.slug] || new Set();
+        const all = [...idx.figures.map(f => ({ path: f, kind: 'fig' })),
+                     ...idx.pages.map(f => ({ path: f, kind: 'page' }))];
+        const tiles = all.map(t => {
+          const isSel = selected.has(t.path);
+          const name = t.path.split('/').pop();
+          return `
+            <div class="picker-tile ${isSel ? 'is-selected' : ''}" data-slug="${p.slug}" data-path="${t.path}">
+              <div class="badge-check"></div>
+              <img src="${t.path}" alt="" loading="lazy">
+              <div class="meta"><span>${name}</span><span class="kind">${t.kind === 'fig' ? 'figure' : 'page'}</span></div>
+            </div>`;
+        }).join('');
+
+        return `
+          <section class="picker-section" id="sec-${p.slug}">
+            <h2>
+              ${p.title}
+              <span class="slug">${p.slug}</span>
+              <span class="count">${selected.size} / ${all.length} selected</span>
+            </h2>
+            <div class="picker-controls">
+              <button onclick="selectFigures('${p.slug}')">Select figures only</button>
+              <button onclick="selectAll('${p.slug}')">Select all</button>
+              <button onclick="selectNone('${p.slug}')">Clear</button>
+            </div>
+            ${all.length === 0
+              ? '<p style="color:var(--muted);font-size:13px">No images extracted from this PDF (likely vector-only). Use page renders or skip.</p>'
+              : `<div class="picker-grid">${tiles}</div>`}
+          </section>`;
+      }).join('');
+
+      document.getElementById('sections').innerHTML = html;
+
+      // Jump nav
+      document.getElementById('jump').innerHTML = projects.map(p =>
+        `<a href="#sec-${p.slug}">${p.slug}</a>`).join('');
+
+      // Wire tiles
+      document.querySelectorAll('.picker-tile').forEach(t => {
+        t.addEventListener('click', () => toggle(t.dataset.slug, t.dataset.path));
+      });
+    }
+
+    function buildSelections() {
+      const obj = {};
+      for (const slug in state) {
+        if (state[slug] && state[slug].size > 0) {
+          obj[slug] = [...state[slug]];
+        }
+      }
+      const lines = ['// =====================================================================',
+        '//  selections.js — generated by picker.html',
+        '//  Replace this file in the repo and push to GitHub.',
+        '// =====================================================================',
+        'window.SELECTIONS = ' + JSON.stringify(obj, null, 2) + ';',
+        ''];
+      return lines.join('\n');
+    }
+
+    document.getElementById('dl').addEventListener('click', () => {
+      const text = buildSelections();
+      const blob = new Blob([text], { type: 'application/javascript' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = 'selections.js';
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+    document.getElementById('copy').addEventListener('click', async () => {
+      try { await navigator.clipboard.writeText(buildSelections());
+        alert('Copied to clipboard. Paste into selections.js'); }
+      catch (e) { alert('Copy failed: ' + e.message); }
+    });
+    document.getElementById('loadCurrent').addEventListener('click', loadCurrent);
+    document.getElementById('clearAll').addEventListener('click', clearAll);
+
+    loadCurrent();
+  </script>
+</body>
+</html>

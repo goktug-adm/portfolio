@@ -47,12 +47,22 @@
   </footer>
 
   <script src="projects.js"></script>
+  <script src="image-index.js"></script>
+  <script src="selections.js"></script>
   <script>
     document.getElementById('year').textContent = new Date().getFullYear();
 
+    function pickCover(slug) {
+      const sel = (window.SELECTIONS || {})[slug];
+      if (sel && sel.length) return sel[0];
+      const idx = (window.IMAGE_INDEX || []).find(p => p.slug === slug);
+      if (idx && idx.figures.length) return idx.figures[0];
+      return `images/${slug}/page-1.jpg`;
+    }
+
     const grid = document.getElementById('grid');
     const cards = window.PROJECTS.map(p => {
-      const cover = `images/${p.slug}/page-1.jpg`;
+      const cover = pickCover(p.slug);
       const tagsHtml = p.tags.slice(0, 4).map(t => `<li>${t}</li>`).join('');
       const featured = p.featured ? ' card--featured' : '';
       const tagsAttr = p.categories.join(' ');
