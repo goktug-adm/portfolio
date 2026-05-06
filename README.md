@@ -75,15 +75,36 @@ GitHub Pages.
 
 1. Open **`picker.html`** in your browser (locally, by double-clicking, or via
    the live site).
-2. Each project shows every available image — both **figures** (extracted from
-   inside the PDF) and **page** renders (full-page screenshots). Click to
+2. Each project shows every available image — **custom** (your own photos),
+   **figures** (extracted from inside the PDF) and **page** renders. Click to
    tick/untick.
 3. Click **⬇ Download selections.js** at the top.
 4. Replace the `selections.js` file in this repo with the downloaded one.
 5. Commit & push.
 
-The detail page priority order is: `selections.js` → all extracted figures →
-page renders. So if you don't pick anything, you still get sensible defaults.
+Detail-page priority: `selections.js` → custom + figures → page renders. So if
+you don't pick anything, you still get sensible defaults.
+
+### Add your own photos to a project
+
+1. Drop any number of `.jpg` / `.png` / `.webp` files into
+   `custom/<project-slug>/`. Filenames don't matter; the project slugs are the
+   folder names.
+2. Run **`regen-index.ps1`** from PowerShell to refresh `image-index.js`:
+
+   ```powershell
+   pwsh ./regen-index.ps1
+   # or on Windows PowerShell 5.1:
+   powershell -ExecutionPolicy Bypass -File ./regen-index.ps1
+   ```
+
+3. Open `picker.html` — your new images appear with a **yellow border** and a
+   `custom` label. Tick the ones you want shown, download `selections.js`.
+4. Commit & push everything (`custom/`, `image-index.js`, `selections.js`).
+
+If you skip the picker entirely, custom images automatically take priority
+over the auto-extracted figures — they show up on the detail page and as the
+card cover on the home grid.
 
 ### Re-extract images from a new PDF
 

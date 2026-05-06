@@ -93,11 +93,11 @@
     // fall back to all extracted figures from image-index.js;
     // last resort: page renders.
     const gallery = document.getElementById('d-gallery');
-    const idx = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug) || { figures: [], pages: [] };
+    const idx = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug) || { figures: [], pages: [], custom: [] };
     const picked = (window.SELECTIONS || {})[project.slug];
     let imgs;
     if (picked && picked.length) imgs = picked;
-    else if (idx.figures.length) imgs = idx.figures;
+    else if ((idx.custom || []).length || idx.figures.length) imgs = [...(idx.custom || []), ...idx.figures];
     else imgs = idx.pages.slice(0, 8);
     if (!imgs.length) {
       gallery.parentElement.style.display = 'none';

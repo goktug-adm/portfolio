@@ -61,6 +61,9 @@
       border-top: 1px solid var(--border);
     }
     .picker-tile .meta .kind { color: var(--accent); font-weight: 600; }
+    .picker-tile .meta .kind.custom { color: var(--mech); }
+    .picker-tile.is-custom { border-color: rgba(251,191,36,.45); }
+    .picker-tile.is-custom.is-selected { box-shadow: 0 0 0 4px rgba(251,191,36,.18); }
     .picker-tile .badge-check {
       position: absolute; top: 8px; right: 8px;
       width: 24px; height: 24px;
@@ -142,13 +145,13 @@
     function selectAll(slug) {
       const idx = window.IMAGE_INDEX.find(p => p.slug === slug);
       if (!idx) return;
-      state[slug] = new Set([...idx.figures, ...idx.pages]);
+      state[slug] = new Set([...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])]);
       render();
     }
     function selectFigures(slug) {
       const idx = window.IMAGE_INDEX.find(p => p.slug === slug);
       if (!idx) return;
-      state[slug] = new Set(idx.figures);
+      state[slug] = new Set([...(idx.figures || []), ...(idx.custom || [])]);
       render();
     }
     function selectNone(slug) {
@@ -177,20 +180,31 @@
       // Sections
       const projects = window.PROJECTS;
       const html = projects.map(p => {
-        const idx = window.IMAGE_INDEX.find(x => x.slug === p.slug) || { figures: [], pages: [] };
+        const idx = window.IMAGE_INDEX.find(x => x.slug === p.slug) || { figures: [], pages: [], custom: [] };
         const selected = state[p.slug] || new Set();
-        const all = [...idx.figures.map(f => ({ path: f, kind: 'fig' })),
-                     ...idx.pages.map(f => ({ path: f, kind: 'page' }))];
+        const all = [
+          ...(idx.custom  || []).map(f => ({ path: f, kind: 'custom' })),
+          ...(idx.figures || []).map(f => ({ path: f, kind: 'fig' })),
+          ...(idx.pages   || []).map(f => ({ path: f, kind: 'page' }))
+        ];
         const tiles = all.map(t => {
           const isSel = selected.has(t.path);
           const name = t.path.split('/').pop();
+          const kindLabel = t.kind === 'custom' ? 'custom' : (t.kind === 'fig' ? 'figure' : 'page');
           return `
-            <div class="picker-tile ${isSel ? 'is-selected' : ''}" data-slug="${p.slug}" data-path="${t.path}">
+            <div class="picker-tile ${isSel ? 'is-selected' : ''} ${t.kind === 'custom' ? 'is-custom' : ''}" data-slug="${p.slug}" data-path="${t.path}">
               <div class="badge-check"></div>
               <img src="${t.path}" alt="" loading="lazy">
-              <div class="meta"><span>${name}</span><span class="kind">${t.kind === 'fig' ? 'figure' : 'page'}</span></div>
+              <div class="meta"><span>${name}</span><span class="kind ${t.kind === 'custom' ? 'custom' : ''}">${kindLabel}</span></div>
             </div>`;
         }).join('');
+
+        const customCount = (idx.custom || []).length;
+        const customNote = `<p style="color:var(--muted);font-size:12.5px;margin:6px 0 12px">
+          Drop your own photos in <code>custom/${p.slug}/</code> then run
+          <code>regen-index.ps1</code> — they'll appear here, ringed yellow.
+          ${customCount > 0 ? `<span style="color:var(--mech)">${customCount} custom image${customCount===1?'':'s'} loaded.</span>` : ''}
+        </p>`;
 
         return `
           <section class="picker-section" id="sec-${p.slug}">
@@ -199,13 +213,14 @@
               <span class="slug">${p.slug}</span>
               <span class="count">${selected.size} / ${all.length} selected</span>
             </h2>
+            ${customNote}
             <div class="picker-controls">
-              <button onclick="selectFigures('${p.slug}')">Select figures only</button>
+              <button onclick="selectFigures('${p.slug}')">Select figures + custom</button>
               <button onclick="selectAll('${p.slug}')">Select all</button>
               <button onclick="selectNone('${p.slug}')">Clear</button>
             </div>
             ${all.length === 0
-              ? '<p style="color:var(--muted);font-size:13px">No images extracted from this PDF (likely vector-only). Use page renders or skip.</p>'
+              ? '<p style="color:var(--muted);font-size:13px">No images yet. Drop your own into <code>custom/' + p.slug + '/</code>.</p>'
               : `<div class="picker-grid">${tiles}</div>`}
           </section>`;
       }).join('');

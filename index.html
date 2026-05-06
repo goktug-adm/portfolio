@@ -56,6 +56,7 @@
       const sel = (window.SELECTIONS || {})[slug];
       if (sel && sel.length) return sel[0];
       const idx = (window.IMAGE_INDEX || []).find(p => p.slug === slug);
+      if (idx && (idx.custom || []).length) return idx.custom[0];
       if (idx && idx.figures.length) return idx.figures[0];
       return `images/${slug}/page-1.jpg`;
     }
