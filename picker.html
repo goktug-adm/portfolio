@@ -227,12 +227,18 @@
         const isCover = curCover === t.path;
         const name = t.path.split('/').pop();
         const kindLabel = t.kind === 'custom' ? 'custom' : (t.kind === 'fig' ? 'figure' : 'page');
+        const safePath = t.path.replace(/'/g, "\\'");
+        const trashBtn = t.kind === 'custom'
+          ? `<button class="trash-btn" title="Delete file from GitHub"
+                     onclick="event.stopPropagation(); deleteCustom('${p.slug}', '${safePath}')">🗑</button>`
+          : '';
         return `
           <div class="picker-tile ${isSel ? 'is-selected' : ''} ${t.kind === 'custom' ? 'is-custom' : ''} ${isCover ? 'is-cover' : ''}" data-slug="${p.slug}" data-path="${t.path}">
             <div class="badge-check"></div>
             <button class="cover-btn ${isCover ? 'is-on' : ''}"
                     title="${isCover ? 'Remove as home-card cover' : 'Use as home-card cover'}"
-                    onclick="event.stopPropagation(); setCover('${p.slug}', '${t.path.replace(/'/g, "\\'")}')">★</button>
+                    onclick="event.stopPropagation(); setCover('${p.slug}', '${safePath}')">★</button>
+            ${trashBtn}
             <img src="${t.path}" alt="" loading="lazy">
             <div class="meta"><span>${name}</span><span class="kind ${t.kind === 'custom' ? 'custom' : ''}">${kindLabel}</span></div>
           </div>`;
@@ -297,6 +303,71 @@
       r.readAsDataURL(file);
     });
   }
+  async function ghDelete(path, message) {
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
+    const head = await fetch(url + '?ref=' + cfg.branch, {
+      headers: { Authorization: 'token ' + cfg.token, Accept: 'application/vnd.github+json' },
+      cache: 'no-store'
+    });
+    if (!head.ok) throw new Error('Cannot find file: ' + head.status);
+    const sha = (await head.json()).sha;
+    const r = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'token ' + cfg.token,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message, sha, branch: cfg.branch })
+    });
+    if (!r.ok) throw new Error(`${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  }
+
+  async function deleteCustom(slug, path) {
+    const name = path.split('/').pop();
+    if (!confirm(`Delete this image from the repo?\n\n${name}\n\nThis cannot be undone.`)) return;
+    if (!cfg.token) return toast('Set up GitHub token first (⚙)', 'err');
+
+    try {
+      await ghDelete(path, `Delete custom image ${name} from ${slug}`);
+
+      // Remove from local index
+      const idx = localIndex.find(p => p.slug === slug);
+      if (idx && idx.custom) idx.custom = idx.custom.filter(p => p !== path);
+
+      // Remove from selections + covers if pinned
+      let touched = false;
+      if (state[slug] && state[slug].has(path)) { state[slug].delete(path); touched = true; }
+      if (covers[slug] === path) { delete covers[slug]; touched = true; }
+
+      // Update image-index.js
+      try {
+        const body = btoa(unescape(encodeURIComponent(rebuildIndexJs())));
+        await ghPut('image-index.js', body, `Update image-index.js (-1 ${slug})`);
+      } catch (e) {
+        toast('image-index.js update warned', 'err', e.message);
+      }
+
+      // If selections/covers were affected, push selections.js too
+      if (touched) {
+        try {
+          const txt = buildSelectionsJs();
+          const b64 = btoa(unescape(encodeURIComponent(txt)));
+          await ghPut('selections.js', b64, `Update selections.js (-1 ${slug})`);
+        } catch (e) {
+          toast('selections.js update warned', 'err', e.message);
+        }
+      }
+
+      toast('Deleted ' + name, 'ok', slug);
+      render();
+    } catch (e) {
+      toast('Delete failed', 'err', e.message);
+    }
+  }
+  window.deleteCustom = deleteCustom;
+
   async function ghPut(path, contentB64, message, retried) {
     const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
     // Always re-fetch the latest sha right before the PUT — protects against

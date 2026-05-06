@@ -904,6 +904,25 @@ h2.section-title { font-size: 32px; }
   border-color: #f59e0b !important;
   box-shadow: 0 0 0 3px rgba(245,158,11,.18) !important;
 }
+
+/* Trash button — only on custom tiles, only on hover */
+.picker-tile .trash-btn {
+  position: absolute; top: 8px; left: 40px;
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 1.5px solid var(--rule);
+  color: var(--muted);
+  font-size: 13px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-family: inherit;
+  z-index: 2;
+  opacity: 0;
+  transition: all .15s ease;
+}
+.picker-tile:hover .trash-btn { opacity: 1; }
+.picker-tile .trash-btn:hover { color: #ffffff; background: #b91c1c; border-color: #b91c1c; }
 .picker-tile.is-uploading { pointer-events: none; opacity: .7; }
 .picker-tile .upload-overlay {
   position: absolute; inset: 0;
