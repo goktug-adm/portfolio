@@ -96,6 +96,9 @@ window.SELECTIONS = {
     "custom/vision-orientation/2372c52c-2cf7-4d57-bb87-738ef39d2c1b-motzcmru.jpg",
     "custom/vision-orientation/Ekran-g-r-nt-s-2026-05-06-100242-motzcu4u.png",
     "images/vision-orientation/page-1.jpg"
+  ],
+  "imdb-sentiment": [
+    "custom/imdb-sentiment/Ekran-g-r-nt-s-2026-05-06-145948-mou0cjeu.png"
   ]
 };
 
@@ -112,5 +115,6 @@ window.COVERS = {
   "me308-lab7": "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motz90ph.png",
   "me308-lab8": "custom/me308-lab8/Ekran-g-r-nt-s-2026-05-06-143123-motz9ih9.png",
   "me308-lab5": "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motzeh1f.png",
-  "patent-sep-2000": "custom/patent-sep-2000/RGH_SGS_STK2_BROSUR_RENDER_1RENDER_2-732-motzfz56.png"
+  "patent-sep-2000": "custom/patent-sep-2000/RGH_SGS_STK2_BROSUR_RENDER_1RENDER_2-732-motzfz56.png",
+  "imdb-sentiment": "custom/imdb-sentiment/Ekran-g-r-nt-s-2026-05-06-145948-mou0cjeu.png"
 };
