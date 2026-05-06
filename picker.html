@@ -5,670 +5,425 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Image Picker — Portfolio</title>
   <link rel="stylesheet" href="styles.css" />
-  <style>
-    .picker-toolbar {
-      position: sticky; top: 0; z-index: 10;
-      background: rgba(11,13,18,.92); backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border);
-      padding: 14px 0;
-    }
-    .picker-toolbar .container {
-      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
-    }
-    .picker-stats { color: var(--muted); font-size: 13px; margin-left: auto; }
-    .picker-section { padding: 28px 0; border-bottom: 1px solid var(--border); }
-    .picker-section h2 {
-      font-size: 18px; margin: 0 0 6px;
-      display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
-    }
-    .picker-section .slug { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 12px; color: var(--muted); }
-    .picker-section .count { font-size: 12px; color: var(--accent); }
-    .picker-controls { display: flex; gap: 8px; margin: 8px 0 14px; flex-wrap: wrap; }
-    .picker-controls button {
-      font-size: 12px; padding: 6px 12px; border-radius: 8px;
-      background: var(--panel); color: var(--muted);
-      border: 1px solid var(--border); cursor: pointer;
-      font-family: inherit;
-    }
-    .picker-controls button:hover { color: var(--text); border-color: rgba(122,162,255,.45); }
-    .picker-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px;
-    }
-    .picker-tile {
-      position: relative;
-      border: 2px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      cursor: pointer;
-      background: #0a0c12;
-      transition: border-color .15s ease, transform .15s ease;
-    }
-    .picker-tile:hover { transform: translateY(-2px); border-color: rgba(122,162,255,.45); }
-    .picker-tile.is-selected {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(122,162,255,.18);
-    }
-    .picker-tile img {
-      width: 100%; height: 160px; object-fit: contain;
-      background: #0e1219; display: block;
-    }
-    .picker-tile .meta {
-      padding: 6px 8px;
-      font-size: 11px;
-      color: var(--muted);
-      font-family: ui-monospace, Menlo, Consolas, monospace;
-      display: flex; justify-content: space-between; gap: 6px;
-      border-top: 1px solid var(--border);
-    }
-    .picker-tile .meta span:first-child {
-      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
-    }
-    .picker-tile .meta .kind { color: var(--accent); font-weight: 600; }
-    .picker-tile .meta .kind.custom { color: var(--mech); }
-    .picker-tile.is-custom { border-color: rgba(251,191,36,.45); }
-    .picker-tile.is-custom.is-selected { box-shadow: 0 0 0 4px rgba(251,191,36,.18); }
-    .picker-tile .badge-check {
-      position: absolute; top: 8px; right: 8px;
-      width: 24px; height: 24px;
-      border-radius: 50%;
-      background: rgba(11,13,18,.85);
-      border: 1.5px solid var(--border);
-      display: flex; align-items: center; justify-content: center;
-      color: transparent; font-weight: 700;
-      transition: all .15s ease;
-    }
-    .picker-tile.is-selected .badge-check {
-      background: var(--accent); border-color: var(--accent); color: #0b0d12;
-    }
-    .picker-tile.is-selected .badge-check::after { content: "✓"; }
-    .picker-tile.is-uploading {
-      pointer-events: none; opacity: .7;
-    }
-    .picker-tile .upload-overlay {
-      position: absolute; inset: 0;
-      background: rgba(11,13,18,.78);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--accent); font-size: 12px; font-weight: 600;
-      letter-spacing: .04em;
-    }
-    .picker-tile.upload-failed { border-color: #f87171 !important; }
-    .picker-jump {
-      display: flex; flex-wrap: wrap; gap: 6px;
-      margin: 16px 0 0;
-      font-size: 12px;
-    }
-    .picker-jump a {
-      padding: 4px 10px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-    }
-    .picker-jump a:hover { color: var(--text); border-color: rgba(122,162,255,.45); text-decoration: none; }
-
-    /* Drop zone */
-    .dropzone {
-      border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 22px;
-      text-align: center;
-      color: var(--muted);
-      font-size: 13.5px;
-      margin: 14px 0 0;
-      cursor: pointer;
-      transition: all .15s ease;
-      background: rgba(255,255,255,.012);
-    }
-    .dropzone:hover, .dropzone.is-dragover {
-      border-color: var(--accent);
-      color: var(--text);
-      background: rgba(122,162,255,.06);
-    }
-    .dropzone.is-disabled { opacity: .4; cursor: not-allowed; }
-    .dropzone strong { color: var(--text); }
-    .dropzone input[type=file] { display: none; }
-    .dropzone-hint { font-size: 11.5px; color: var(--muted-2, #6b7388); margin-top: 6px; }
-
-    /* Settings drawer */
-    .settings-btn {
-      width: 38px; height: 38px;
-      border-radius: 50%;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      color: var(--text);
-      cursor: pointer; font-size: 16px;
-    }
-    .settings-btn.is-set { border-color: rgba(94,234,212,.55); color: var(--robotics); }
-    .settings-btn.is-unset { border-color: rgba(248,113,113,.55); color: #f87171; }
-    .settings-drawer {
-      position: fixed; top: 0; right: 0;
-      width: min(420px, 100vw); height: 100vh;
-      background: var(--panel);
-      border-left: 1px solid var(--border);
-      padding: 28px 24px;
-      transform: translateX(100%);
-      transition: transform .25s ease;
-      z-index: 50; overflow-y: auto;
-      box-shadow: -20px 0 60px rgba(0,0,0,.5);
-    }
-    .settings-drawer.is-open { transform: translateX(0); }
-    .settings-drawer h2 { margin: 0 0 6px; font-size: 18px; }
-    .settings-drawer p { color: var(--muted); font-size: 13px; line-height: 1.6; }
-    .settings-drawer label {
-      display: block; font-size: 11px; color: var(--muted);
-      text-transform: uppercase; letter-spacing: .12em;
-      margin: 18px 0 6px; font-weight: 600;
-    }
-    .settings-drawer input {
-      width: 100%; padding: 10px 12px;
-      background: var(--bg-2); color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 8px; font-size: 14px;
-      font-family: inherit;
-    }
-    .settings-drawer input:focus { outline: none; border-color: var(--accent); }
-    .settings-drawer .actions {
-      display: flex; gap: 8px; margin-top: 20px; flex-wrap: wrap;
-    }
-    .settings-drawer .close {
-      position: absolute; top: 16px; right: 18px;
-      background: transparent; border: none;
-      color: var(--muted); font-size: 20px; cursor: pointer;
-    }
-    .settings-drawer code { font-size: 12px; color: var(--accent); }
-    .scrim {
-      position: fixed; inset: 0;
-      background: rgba(5,7,12,.65);
-      z-index: 40; display: none;
-    }
-    .scrim.is-open { display: block; }
-
-    /* Toast */
-    .toast-stack {
-      position: fixed; bottom: 20px; right: 20px;
-      display: flex; flex-direction: column-reverse; gap: 8px;
-      z-index: 200; max-width: 360px;
-    }
-    .toast {
-      padding: 12px 16px;
-      background: var(--panel);
-      border: 1px solid var(--border);
-      border-left: 3px solid var(--accent);
-      border-radius: 10px;
-      font-size: 13.5px;
-      color: var(--text);
-      box-shadow: var(--shadow);
-      animation: toast-in .25s ease;
-    }
-    .toast.err  { border-left-color: #f87171; }
-    .toast.ok   { border-left-color: var(--robotics); }
-    .toast .small { color: var(--muted); font-size: 12px; }
-    @keyframes toast-in { from { opacity: 0; transform: translateY(8px) } to { opacity: 1; transform: none } }
-  </style>
 </head>
 <body>
-  <header class="hero" style="padding: 48px 0 28px">
+<div class="page">
+
+  <header class="runhead">
     <div class="container container--wide">
-      <p class="eyebrow">Editing Tool</p>
-      <h1 style="font-size: 36px; margin-bottom: 8px">Image Picker</h1>
-      <p class="tagline" style="margin-bottom: 12px">
-        Drag &amp; drop your photos onto any project, tick the ones you want
-        shown, and the picker pushes everything to GitHub for you. Site
-        auto-rebuilds in 30–60 seconds.
-      </p>
+      <div class="left"><strong>Göktuğ Arda Gök</strong><span>Project Portfolio</span></div>
+      <div class="right">Editing Tool · Picker</div>
     </div>
   </header>
 
-  <div class="picker-toolbar">
+  <main>
     <div class="container container--wide">
-      <button class="btn btn--primary" id="save">⬆ Push selections to GitHub</button>
-      <button class="btn" id="dl">⬇ Download selections.js</button>
-      <button class="btn" id="copy">📋 Copy</button>
-      <button class="btn" id="loadCurrent">↻ Reload from disk</button>
-      <button class="btn" id="clearAll">✕ Clear all</button>
-      <span class="picker-stats" id="stats">0 selected across 0 projects</span>
-      <button class="settings-btn" id="settingsBtn" title="GitHub settings">⚙</button>
+      <div class="title-block" style="margin-top: 36px">
+        <p class="section-mark">§ Editor</p>
+        <h1 class="section-title">Image Picker</h1>
+        <hr class="section-rule">
+        <p class="section-intro">
+          Drag &amp; drop your photos onto any project, tick the ones you want shown,
+          and the picker pushes everything to GitHub for you. Site auto-rebuilds in
+          30–60 seconds.
+        </p>
+      </div>
     </div>
-  </div>
 
-  <main class="container container--wide">
-    <nav class="picker-jump" id="jump"></nav>
-    <div id="sections"></div>
+    <div class="picker-toolbar">
+      <div class="container container--wide">
+        <button class="btn btn--primary" id="save">⬆ Push selections</button>
+        <button class="btn" id="dl">⬇ Download selections.js</button>
+        <button class="btn" id="copy">📋 Copy</button>
+        <button class="btn" id="loadCurrent">↻ Reload</button>
+        <button class="btn" id="clearAll">✕ Clear all</button>
+        <span class="picker-stats" id="stats">0 selected across 0 projects</span>
+        <button class="settings-btn" id="settingsBtn" title="GitHub settings">⚙</button>
+      </div>
+    </div>
+
+    <div class="container container--wide">
+      <nav class="picker-jump" id="jump"></nav>
+      <div id="sections"></div>
+    </div>
   </main>
 
-  <!-- Settings drawer -->
-  <div class="scrim" id="scrim"></div>
-  <aside class="settings-drawer" id="drawer">
-    <button class="close" id="drawerClose">×</button>
-    <h2>GitHub upload</h2>
-    <p>
-      Direct upload pushes new images straight to the repo via GitHub's API.
-      You need a <strong>Personal Access Token</strong> with the
-      <code>public_repo</code> scope.
-      <br><br>
-      <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Portfolio%20picker" target="_blank">Create one →</a>
-      The token is stored only in your browser's <code>localStorage</code>.
-    </p>
-    <label>Owner</label>
-    <input id="cfgOwner" placeholder="goktug-adm" value="goktug-adm" />
-    <label>Repo</label>
-    <input id="cfgRepo" placeholder="portfolio" value="portfolio" />
-    <label>Branch</label>
-    <input id="cfgBranch" placeholder="main" value="main" />
-    <label>Token (kept in browser)</label>
-    <input id="cfgToken" type="password" placeholder="ghp_…" autocomplete="off" />
-    <div class="actions">
-      <button class="btn btn--primary" id="cfgSave">Save</button>
-      <button class="btn" id="cfgForget">Forget token</button>
-      <button class="btn" id="cfgTest">Test connection</button>
+  <footer class="runfoot">
+    <div class="container container--wide">
+      <div>Sabancı University</div>
+      <div class="center">Project Portfolio · Picker</div>
+      <div><a href="index.html">← Back to portfolio</a></div>
     </div>
-    <p style="margin-top:18px;font-size:12px">
-      Without a token you can still pick + download <code>selections.js</code>
-      manually and commit yourself.
-    </p>
-  </aside>
+  </footer>
+</div>
 
-  <div class="toast-stack" id="toasts"></div>
+<!-- Settings drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="settings-drawer" id="drawer">
+  <button class="close" id="drawerClose">×</button>
+  <h2>GitHub upload</h2>
+  <p>
+    Direct upload pushes new images straight to the repo via GitHub's API.
+    You need a <strong>Personal Access Token</strong> with the
+    <code>public_repo</code> scope.
+    <br><br>
+    <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Portfolio%20picker" target="_blank">Create one →</a>
+    The token is stored only in your browser's <code>localStorage</code>.
+  </p>
+  <label>Owner</label>
+  <input id="cfgOwner" placeholder="goktug-adm" value="goktug-adm" />
+  <label>Repo</label>
+  <input id="cfgRepo" placeholder="portfolio" value="portfolio" />
+  <label>Branch</label>
+  <input id="cfgBranch" placeholder="main" value="main" />
+  <label>Token (kept in browser)</label>
+  <input id="cfgToken" type="password" placeholder="ghp_…" autocomplete="off" />
+  <div class="actions">
+    <button class="btn btn--primary" id="cfgSave">Save</button>
+    <button class="btn" id="cfgForget">Forget token</button>
+    <button class="btn" id="cfgTest">Test connection</button>
+  </div>
+  <p style="margin-top:18px;font-size:12px">
+    Without a token you can still pick + download <code>selections.js</code>
+    manually and commit yourself.
+  </p>
+</aside>
 
-  <script src="projects.js"></script>
-  <script src="image-index.js"></script>
-  <script src="selections.js"></script>
-  <script>
-    /* ===== State ===== */
-    const state = {};               // { slug: Set<path> }
-    const localIndex = JSON.parse(JSON.stringify(window.IMAGE_INDEX || []));
-    // local mirror so we can append uploads without reload
+<div class="toast-stack" id="toasts"></div>
 
-    const cfg = {
-      owner:  localStorage.getItem('gh_owner')  || 'goktug-adm',
-      repo:   localStorage.getItem('gh_repo')   || 'portfolio',
-      branch: localStorage.getItem('gh_branch') || 'main',
-      token:  localStorage.getItem('gh_token')  || ''
-    };
+<script src="projects.js"></script>
+<script src="image-index.js"></script>
+<script src="selections.js"></script>
+<script>
+  /* ===== State ===== */
+  const state = {};
+  const localIndex = JSON.parse(JSON.stringify(window.IMAGE_INDEX || []));
+  const cfg = {
+    owner:  localStorage.getItem('gh_owner')  || 'goktug-adm',
+    repo:   localStorage.getItem('gh_repo')   || 'portfolio',
+    branch: localStorage.getItem('gh_branch') || 'main',
+    token:  localStorage.getItem('gh_token')  || ''
+  };
 
-    /* ===== Toasts ===== */
-    function toast(msg, kind, sub) {
-      const el = document.createElement('div');
-      el.className = 'toast' + (kind ? ' ' + kind : '');
-      el.innerHTML = `<div>${msg}</div>${sub ? `<div class="small">${sub}</div>` : ''}`;
-      document.getElementById('toasts').appendChild(el);
-      setTimeout(() => el.remove(), 5500);
-    }
+  function toast(msg, kind, sub) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    el.innerHTML = `<div>${msg}</div>${sub ? `<div class="small">${sub}</div>` : ''}`;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 5500);
+  }
 
-    /* ===== Settings drawer ===== */
-    const drawer = document.getElementById('drawer');
-    const scrim  = document.getElementById('scrim');
-    function openDrawer() {
-      document.getElementById('cfgOwner').value  = cfg.owner;
-      document.getElementById('cfgRepo').value   = cfg.repo;
-      document.getElementById('cfgBranch').value = cfg.branch;
-      document.getElementById('cfgToken').value  = cfg.token;
-      drawer.classList.add('is-open');
-      scrim.classList.add('is-open');
-    }
-    function closeDrawer() {
-      drawer.classList.remove('is-open');
-      scrim.classList.remove('is-open');
-    }
-    document.getElementById('settingsBtn').addEventListener('click', openDrawer);
-    document.getElementById('drawerClose').addEventListener('click', closeDrawer);
-    scrim.addEventListener('click', closeDrawer);
-    document.getElementById('cfgSave').addEventListener('click', () => {
-      cfg.owner  = document.getElementById('cfgOwner').value.trim()  || 'goktug-adm';
-      cfg.repo   = document.getElementById('cfgRepo').value.trim()   || 'portfolio';
-      cfg.branch = document.getElementById('cfgBranch').value.trim() || 'main';
-      cfg.token  = document.getElementById('cfgToken').value.trim();
-      localStorage.setItem('gh_owner',  cfg.owner);
-      localStorage.setItem('gh_repo',   cfg.repo);
-      localStorage.setItem('gh_branch', cfg.branch);
-      if (cfg.token) localStorage.setItem('gh_token', cfg.token);
-      updateSettingsBtn();
-      closeDrawer();
-      toast('Settings saved', 'ok');
-    });
-    document.getElementById('cfgForget').addEventListener('click', () => {
-      cfg.token = '';
-      localStorage.removeItem('gh_token');
-      document.getElementById('cfgToken').value = '';
-      updateSettingsBtn();
-      toast('Token cleared');
-    });
-    document.getElementById('cfgTest').addEventListener('click', async () => {
-      const t = document.getElementById('cfgToken').value.trim() || cfg.token;
-      if (!t) return toast('No token', 'err');
-      try {
-        const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
-          headers: { Authorization: 'token ' + t, Accept: 'application/vnd.github+json' }
-        });
-        if (r.ok) {
-          const j = await r.json();
-          toast('Connected ✓', 'ok', `${j.full_name} · push: ${j.permissions?.push ? 'yes' : 'no'}`);
-        } else {
-          toast('GitHub: ' + r.status, 'err', (await r.text()).slice(0, 120));
-        }
-      } catch (e) { toast('Network error', 'err', e.message); }
-    });
-    function updateSettingsBtn() {
-      const btn = document.getElementById('settingsBtn');
-      btn.classList.toggle('is-set', !!cfg.token);
-      btn.classList.toggle('is-unset', !cfg.token);
-      btn.title = cfg.token ? 'GitHub configured' : 'Set up GitHub upload';
-    }
-    updateSettingsBtn();
-
-    /* ===== Selection logic ===== */
-    function loadCurrent() {
-      Object.keys(state).forEach(k => state[k] = new Set());
-      const cur = window.SELECTIONS || {};
-      for (const slug in cur) state[slug] = new Set(cur[slug]);
-      render();
-    }
-    function clearAll() {
-      Object.keys(state).forEach(k => state[k] = new Set());
-      render();
-    }
-    function selectAll(slug) {
-      const idx = localIndex.find(p => p.slug === slug);
-      if (!idx) return;
-      state[slug] = new Set([...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])]);
-      render();
-    }
-    function selectFigures(slug) {
-      const idx = localIndex.find(p => p.slug === slug);
-      if (!idx) return;
-      state[slug] = new Set([...(idx.figures || []), ...(idx.custom || [])]);
-      render();
-    }
-    function selectNone(slug) {
-      state[slug] = new Set();
-      render();
-    }
-    function toggle(slug, path) {
-      if (!state[slug]) state[slug] = new Set();
-      if (state[slug].has(path)) state[slug].delete(path);
-      else state[slug].add(path);
-      render();
-    }
-
-    /* ===== Render ===== */
-    function render() {
-      let totalSel = 0, projWith = 0;
-      for (const slug in state) {
-        if (state[slug] && state[slug].size > 0) {
-          totalSel += state[slug].size;
-          projWith++;
-        }
+  /* Settings drawer */
+  const drawer = document.getElementById('drawer');
+  const scrim  = document.getElementById('scrim');
+  function openDrawer() {
+    document.getElementById('cfgOwner').value  = cfg.owner;
+    document.getElementById('cfgRepo').value   = cfg.repo;
+    document.getElementById('cfgBranch').value = cfg.branch;
+    document.getElementById('cfgToken').value  = cfg.token;
+    drawer.classList.add('is-open'); scrim.classList.add('is-open');
+  }
+  function closeDrawer() { drawer.classList.remove('is-open'); scrim.classList.remove('is-open'); }
+  document.getElementById('settingsBtn').addEventListener('click', openDrawer);
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  document.getElementById('cfgSave').addEventListener('click', () => {
+    cfg.owner  = document.getElementById('cfgOwner').value.trim()  || 'goktug-adm';
+    cfg.repo   = document.getElementById('cfgRepo').value.trim()   || 'portfolio';
+    cfg.branch = document.getElementById('cfgBranch').value.trim() || 'main';
+    cfg.token  = document.getElementById('cfgToken').value.trim();
+    localStorage.setItem('gh_owner',  cfg.owner);
+    localStorage.setItem('gh_repo',   cfg.repo);
+    localStorage.setItem('gh_branch', cfg.branch);
+    if (cfg.token) localStorage.setItem('gh_token', cfg.token);
+    updateSettingsBtn(); closeDrawer(); toast('Settings saved', 'ok');
+  });
+  document.getElementById('cfgForget').addEventListener('click', () => {
+    cfg.token = ''; localStorage.removeItem('gh_token');
+    document.getElementById('cfgToken').value = '';
+    updateSettingsBtn(); toast('Token cleared');
+  });
+  document.getElementById('cfgTest').addEventListener('click', async () => {
+    const t = document.getElementById('cfgToken').value.trim() || cfg.token;
+    if (!t) return toast('No token', 'err');
+    try {
+      const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
+        headers: { Authorization: 'token ' + t, Accept: 'application/vnd.github+json' }
+      });
+      if (r.ok) {
+        const j = await r.json();
+        toast('Connected ✓', 'ok', `${j.full_name} · push: ${j.permissions?.push ? 'yes' : 'no'}`);
+      } else {
+        toast('GitHub: ' + r.status, 'err', (await r.text()).slice(0, 120));
       }
-      document.getElementById('stats').textContent =
-        `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+    } catch (e) { toast('Network error', 'err', e.message); }
+  });
+  function updateSettingsBtn() {
+    const btn = document.getElementById('settingsBtn');
+    btn.classList.toggle('is-set', !!cfg.token);
+    btn.classList.toggle('is-unset', !cfg.token);
+    btn.title = cfg.token ? 'GitHub configured' : 'Set up GitHub upload';
+  }
+  updateSettingsBtn();
 
-      const html = window.PROJECTS.map(p => {
-        const idx = localIndex.find(x => x.slug === p.slug)
-                  || { figures: [], pages: [], custom: [] };
-        const selected = state[p.slug] || new Set();
-        const all = [
-          ...(idx.custom  || []).map(f => ({ path: f, kind: 'custom' })),
-          ...(idx.figures || []).map(f => ({ path: f, kind: 'fig' })),
-          ...(idx.pages   || []).map(f => ({ path: f, kind: 'page' }))
-        ];
-        const tiles = all.map(t => {
-          const isSel = selected.has(t.path);
-          const name = t.path.split('/').pop();
-          const kindLabel = t.kind === 'custom' ? 'custom' : (t.kind === 'fig' ? 'figure' : 'page');
-          return `
-            <div class="picker-tile ${isSel ? 'is-selected' : ''} ${t.kind === 'custom' ? 'is-custom' : ''}" data-slug="${p.slug}" data-path="${t.path}">
-              <div class="badge-check"></div>
-              <img src="${t.path}" alt="" loading="lazy">
-              <div class="meta"><span>${name}</span><span class="kind ${t.kind === 'custom' ? 'custom' : ''}">${kindLabel}</span></div>
-            </div>`;
-        }).join('');
+  /* Selection logic */
+  function loadCurrent() {
+    Object.keys(state).forEach(k => state[k] = new Set());
+    const cur = window.SELECTIONS || {};
+    for (const slug in cur) state[slug] = new Set(cur[slug]);
+    render();
+  }
+  function clearAll() { Object.keys(state).forEach(k => state[k] = new Set()); render(); }
+  function selectAll(slug) {
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    state[slug] = new Set([...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])]);
+    render();
+  }
+  function selectFigures(slug) {
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    state[slug] = new Set([...(idx.figures || []), ...(idx.custom || [])]);
+    render();
+  }
+  function selectNone(slug) { state[slug] = new Set(); render(); }
+  function toggle(slug, path) {
+    if (!state[slug]) state[slug] = new Set();
+    if (state[slug].has(path)) state[slug].delete(path); else state[slug].add(path);
+    render();
+  }
 
+  function render() {
+    let totalSel = 0, projWith = 0;
+    for (const slug in state) {
+      if (state[slug] && state[slug].size > 0) { totalSel += state[slug].size; projWith++; }
+    }
+    document.getElementById('stats').textContent =
+      `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+
+    const html = window.PROJECTS.map(p => {
+      const idx = localIndex.find(x => x.slug === p.slug)
+                || { figures: [], pages: [], custom: [] };
+      const selected = state[p.slug] || new Set();
+      const all = [
+        ...(idx.custom  || []).map(f => ({ path: f, kind: 'custom' })),
+        ...(idx.figures || []).map(f => ({ path: f, kind: 'fig' })),
+        ...(idx.pages   || []).map(f => ({ path: f, kind: 'page' }))
+      ];
+      const tiles = all.map(t => {
+        const isSel = selected.has(t.path);
+        const name = t.path.split('/').pop();
+        const kindLabel = t.kind === 'custom' ? 'custom' : (t.kind === 'fig' ? 'figure' : 'page');
         return `
-          <section class="picker-section" id="sec-${p.slug}">
-            <h2>
-              ${p.title}
-              <span class="slug">${p.slug}</span>
-              <span class="count">${selected.size} / ${all.length} selected</span>
-            </h2>
-            <div class="picker-controls">
-              <button onclick="selectFigures('${p.slug}')">Select figures + custom</button>
-              <button onclick="selectAll('${p.slug}')">Select all</button>
-              <button onclick="selectNone('${p.slug}')">Clear</button>
-            </div>
-            ${all.length === 0
-              ? '<p style="color:var(--muted);font-size:13px;margin:0">No images yet — drop one in below.</p>'
-              : `<div class="picker-grid" id="grid-${p.slug}">${tiles}</div>`}
-            <label class="dropzone" data-slug="${p.slug}">
-              <strong>Drag images here</strong> or click to choose · uploads to <code>custom/${p.slug}/</code>
-              <div class="dropzone-hint">JPG / PNG / WebP · auto-pushed to GitHub when token is set</div>
-              <input type="file" multiple accept="image/jpeg,image/png,image/webp">
-            </label>
-          </section>`;
+          <div class="picker-tile ${isSel ? 'is-selected' : ''} ${t.kind === 'custom' ? 'is-custom' : ''}" data-slug="${p.slug}" data-path="${t.path}">
+            <div class="badge-check"></div>
+            <img src="${t.path}" alt="" loading="lazy">
+            <div class="meta"><span>${name}</span><span class="kind ${t.kind === 'custom' ? 'custom' : ''}">${kindLabel}</span></div>
+          </div>`;
       }).join('');
 
-      document.getElementById('sections').innerHTML = html;
-      document.getElementById('jump').innerHTML = window.PROJECTS.map(p =>
-        `<a href="#sec-${p.slug}">${p.slug}</a>`).join('');
+      return `
+        <section class="picker-section" id="sec-${p.slug}">
+          <h2>
+            ${p.title}
+            <span class="slug">${p.slug}</span>
+            <span class="count">${selected.size} / ${all.length} selected</span>
+          </h2>
+          <div class="picker-controls">
+            <button onclick="selectFigures('${p.slug}')">Select figures + custom</button>
+            <button onclick="selectAll('${p.slug}')">Select all</button>
+            <button onclick="selectNone('${p.slug}')">Clear</button>
+          </div>
+          ${all.length === 0
+            ? '<p style="color:var(--muted);font-size:13px;margin:0">No images yet — drop one in below.</p>'
+            : `<div class="picker-grid" id="grid-${p.slug}">${tiles}</div>`}
+          <label class="dropzone" data-slug="${p.slug}">
+            <strong>Drag images here</strong> or click to choose · uploads to <code>custom/${p.slug}/</code>
+            <div class="dropzone-hint">JPG / PNG / WebP · auto-pushed to GitHub when token is set</div>
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp">
+          </label>
+        </section>`;
+    }).join('');
 
-      document.querySelectorAll('.picker-tile').forEach(t => {
-        t.addEventListener('click', () => toggle(t.dataset.slug, t.dataset.path));
+    document.getElementById('sections').innerHTML = html;
+    document.getElementById('jump').innerHTML = window.PROJECTS.map(p =>
+      `<a href="#sec-${p.slug}">${p.slug}</a>`).join('');
+
+    document.querySelectorAll('.picker-tile').forEach(t => {
+      t.addEventListener('click', () => toggle(t.dataset.slug, t.dataset.path));
+    });
+    document.querySelectorAll('.dropzone').forEach(dz => {
+      const slug = dz.dataset.slug;
+      const inp  = dz.querySelector('input');
+      inp.addEventListener('change', e => handleFiles(slug, e.target.files));
+      dz.addEventListener('dragenter', e => { e.preventDefault(); dz.classList.add('is-dragover'); });
+      dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('is-dragover'); });
+      dz.addEventListener('dragleave', e => { dz.classList.remove('is-dragover'); });
+      dz.addEventListener('drop',      e => {
+        e.preventDefault(); dz.classList.remove('is-dragover');
+        handleFiles(slug, e.dataTransfer.files);
       });
+    });
+  }
 
-      document.querySelectorAll('.dropzone').forEach(dz => {
-        const slug = dz.dataset.slug;
-        const inp  = dz.querySelector('input');
-        inp.addEventListener('change', e => handleFiles(slug, e.target.files));
-        dz.addEventListener('dragenter', e => { e.preventDefault(); dz.classList.add('is-dragover'); });
-        dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('is-dragover'); });
-        dz.addEventListener('dragleave', e => { dz.classList.remove('is-dragover'); });
-        dz.addEventListener('drop',      e => {
-          e.preventDefault();
-          dz.classList.remove('is-dragover');
-          handleFiles(slug, e.dataTransfer.files);
-        });
-      });
+  /* Upload to GitHub */
+  function safeName(orig) {
+    const ext = orig.split('.').pop().toLowerCase();
+    const base = orig.replace(/\.[^.]+$/, '')
+      .replace(/[^a-zA-Z0-9-_]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'img';
+    return `${base}-${Date.now().toString(36)}.${ext}`;
+  }
+  function readAsBase64(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.slice(r.result.indexOf(',') + 1));
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+  async function ghPut(path, contentB64, message) {
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
+    let sha = null;
+    const head = await fetch(url + '?ref=' + cfg.branch, {
+      headers: { Authorization: 'token ' + cfg.token, Accept: 'application/vnd.github+json' }
+    });
+    if (head.ok) sha = (await head.json()).sha;
+    const body = { message, content: contentB64, branch: cfg.branch };
+    if (sha) body.sha = sha;
+    const r = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'token ' + cfg.token,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (!r.ok) throw new Error(`${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  }
+  function rebuildIndexJs() {
+    const obj = localIndex.map(p => ({
+      slug: p.slug, figures: p.figures || [], pages: p.pages || [], custom: p.custom || []
+    }));
+    return 'window.IMAGE_INDEX = ' + JSON.stringify(obj) + ';\n';
+  }
+  function buildSelectionsJs() {
+    const obj = {};
+    for (const slug in state) if (state[slug] && state[slug].size > 0) obj[slug] = [...state[slug]];
+    return [
+      '// =====================================================================',
+      '//  selections.js — generated by picker.html',
+      '// =====================================================================',
+      'window.SELECTIONS = ' + JSON.stringify(obj, null, 2) + ';', ''
+    ].join('\n');
+  }
+
+  async function handleFiles(slug, fileList) {
+    const files = [...fileList];
+    if (!files.length) return;
+    if (!cfg.token) {
+      toast('Set up GitHub token first (⚙ top right)', 'err',
+            'Or download selections.js + drop files into custom/ manually.');
+      return;
     }
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    idx.custom = idx.custom || [];
 
-    /* ===== Upload to GitHub ===== */
-    function safeName(orig) {
-      const ext = orig.split('.').pop().toLowerCase();
-      const base = orig.replace(/\.[^.]+$/, '')
-        .replace(/[^a-zA-Z0-9-_]+/g, '-')
-        .replace(/^-+|-+$/g, '')
-        .slice(0, 40) || 'img';
-      const stamp = Date.now().toString(36);
-      return `${base}-${stamp}.${ext}`;
-    }
+    const grid = document.getElementById('grid-' + slug)
+      || (() => {
+        const sec = document.getElementById('sec-' + slug);
+        const newGrid = document.createElement('div');
+        newGrid.className = 'picker-grid';
+        newGrid.id = 'grid-' + slug;
+        sec.querySelector('.picker-controls').after(newGrid);
+        return newGrid;
+      })();
 
-    function readAsBase64(file) {
-      return new Promise((res, rej) => {
-        const r = new FileReader();
-        r.onload = () => {
-          const s = r.result;
-          const i = s.indexOf(',');
-          res(s.slice(i + 1));
-        };
-        r.onerror = rej;
-        r.readAsDataURL(file);
-      });
-    }
+    const newPaths = [];
+    for (const file of files) {
+      const filename = safeName(file.name);
+      const path = `custom/${slug}/${filename}`;
+      const previewUrl = URL.createObjectURL(file);
 
-    async function ghPut(path, contentB64, message) {
-      // Check if file exists for sha (needed for update; for create-new no sha)
-      const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
-      let sha = null;
-      const head = await fetch(url + '?ref=' + cfg.branch, {
-        headers: { Authorization: 'token ' + cfg.token, Accept: 'application/vnd.github+json' }
-      });
-      if (head.ok) sha = (await head.json()).sha;
+      const tile = document.createElement('div');
+      tile.className = 'picker-tile is-custom is-uploading';
+      tile.dataset.slug = slug;
+      tile.dataset.path = path;
+      tile.innerHTML = `
+        <div class="badge-check"></div>
+        <img src="${previewUrl}" alt="">
+        <div class="upload-overlay">UPLOADING…</div>
+        <div class="meta"><span>${filename}</span><span class="kind custom">custom</span></div>`;
+      grid.prepend(tile);
 
-      const body = { message, content: contentB64, branch: cfg.branch };
-      if (sha) body.sha = sha;
-
-      const r = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          Authorization: 'token ' + cfg.token,
-          Accept: 'application/vnd.github+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      });
-      if (!r.ok) {
-        const txt = await r.text();
-        throw new Error(`${r.status}: ${txt.slice(0, 200)}`);
-      }
-      return r.json();
-    }
-
-    function rebuildIndexJs() {
-      const obj = localIndex.map(p => ({
-        slug: p.slug,
-        figures: p.figures || [],
-        pages:   p.pages   || [],
-        custom:  p.custom  || []
-      }));
-      return 'window.IMAGE_INDEX = ' + JSON.stringify(obj) + ';\n';
-    }
-
-    function buildSelectionsJs() {
-      const obj = {};
-      for (const slug in state) {
-        if (state[slug] && state[slug].size > 0) obj[slug] = [...state[slug]];
-      }
-      return [
-        '// =====================================================================',
-        '//  selections.js — generated by picker.html',
-        '// =====================================================================',
-        'window.SELECTIONS = ' + JSON.stringify(obj, null, 2) + ';',
-        ''
-      ].join('\n');
-    }
-
-    async function handleFiles(slug, fileList) {
-      const files = [...fileList];
-      if (!files.length) return;
-      if (!cfg.token) {
-        toast('Set up GitHub token first (⚙ top right)', 'err',
-              'Or download selections.js + drop files into custom/ manually.');
-        return;
-      }
-
-      const idx = localIndex.find(p => p.slug === slug);
-      if (!idx) return;
-      idx.custom = idx.custom || [];
-
-      // Insert preview tiles immediately
-      const grid = document.getElementById('grid-' + slug)
-        || (() => {
-          const sec = document.getElementById('sec-' + slug);
-          const newGrid = document.createElement('div');
-          newGrid.className = 'picker-grid';
-          newGrid.id = 'grid-' + slug;
-          sec.querySelector('.picker-controls').after(newGrid);
-          return newGrid;
-        })();
-
-      const newPaths = [];
-
-      for (const file of files) {
-        const filename = safeName(file.name);
-        const path = `custom/${slug}/${filename}`;
-        const previewUrl = URL.createObjectURL(file);
-
-        const tile = document.createElement('div');
-        tile.className = 'picker-tile is-custom is-uploading';
-        tile.dataset.slug = slug;
-        tile.dataset.path = path;
-        tile.innerHTML = `
-          <div class="badge-check"></div>
-          <img src="${previewUrl}" alt="">
-          <div class="upload-overlay">UPLOADING…</div>
-          <div class="meta"><span>${filename}</span><span class="kind custom">custom</span></div>`;
-        grid.prepend(tile);
-
-        try {
-          const b64 = await readAsBase64(file);
-          await ghPut(path, b64, `Add custom image ${filename} for ${slug}`);
-          tile.classList.remove('is-uploading');
-          tile.querySelector('.upload-overlay')?.remove();
-          tile.classList.add('is-selected');
-          tile.addEventListener('click', () => toggle(slug, path));
-          idx.custom.push(path);
-          if (!state[slug]) state[slug] = new Set();
-          state[slug].add(path);
-          newPaths.push(path);
-          toast('Uploaded ' + filename, 'ok', slug);
-        } catch (e) {
-          tile.classList.remove('is-uploading');
-          tile.classList.add('upload-failed');
-          tile.querySelector('.upload-overlay').textContent = 'FAILED';
-          toast('Upload failed: ' + filename, 'err', e.message);
-        }
-      }
-
-      if (newPaths.length) {
-        // Persist new image-index.js so the public site sees the additions.
-        try {
-          const body = btoa(unescape(encodeURIComponent(rebuildIndexJs())));
-          await ghPut('image-index.js', body, `Update image-index.js (+${newPaths.length} custom)`);
-          toast('image-index.js updated', 'ok',
-                'Site rebuild starts in a few seconds.');
-        } catch (e) {
-          toast('Could not update image-index.js', 'err', e.message);
-        }
-      }
-
-      // Update stats
-      let totalSel = 0, projWith = 0;
-      for (const k in state) if (state[k] && state[k].size > 0) { totalSel += state[k].size; projWith++; }
-      document.getElementById('stats').textContent =
-        `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
-      // Update count in section header
-      const head = document.querySelector(`#sec-${slug} .count`);
-      const all = [...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])];
-      if (head) head.textContent = `${(state[slug] || new Set()).size} / ${all.length} selected`;
-    }
-
-    /* ===== Push selections ===== */
-    document.getElementById('save').addEventListener('click', async () => {
-      if (!cfg.token) {
-        return toast('Set up token first', 'err', 'Use ⬇ Download as fallback');
-      }
-      const btn = document.getElementById('save');
-      btn.disabled = true; btn.textContent = '…pushing';
       try {
-        const text = buildSelectionsJs();
-        const b64  = btoa(unescape(encodeURIComponent(text)));
-        await ghPut('selections.js', b64, 'Update selections.js via picker');
-        toast('selections.js pushed ✓', 'ok', 'Live in 30–60 seconds');
+        const b64 = await readAsBase64(file);
+        await ghPut(path, b64, `Add custom image ${filename} for ${slug}`);
+        tile.classList.remove('is-uploading');
+        tile.querySelector('.upload-overlay')?.remove();
+        tile.classList.add('is-selected');
+        tile.addEventListener('click', () => toggle(slug, path));
+        idx.custom.push(path);
+        if (!state[slug]) state[slug] = new Set();
+        state[slug].add(path);
+        newPaths.push(path);
+        toast('Uploaded ' + filename, 'ok', slug);
       } catch (e) {
-        toast('Push failed', 'err', e.message);
-      } finally {
-        btn.disabled = false; btn.textContent = '⬆ Push selections to GitHub';
+        tile.classList.remove('is-uploading');
+        tile.classList.add('upload-failed');
+        tile.querySelector('.upload-overlay').textContent = 'FAILED';
+        toast('Upload failed: ' + filename, 'err', e.message);
       }
-    });
+    }
 
-    /* ===== Download / clipboard ===== */
-    document.getElementById('dl').addEventListener('click', () => {
-      const blob = new Blob([buildSelectionsJs()], { type: 'application/javascript' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'selections.js';
-      a.click();
-      URL.revokeObjectURL(url);
-    });
-    document.getElementById('copy').addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(buildSelectionsJs());
-        toast('Copied to clipboard', 'ok'); }
-      catch (e) { toast('Copy failed', 'err', e.message); }
-    });
-    document.getElementById('loadCurrent').addEventListener('click', loadCurrent);
-    document.getElementById('clearAll').addEventListener('click', clearAll);
+    if (newPaths.length) {
+      try {
+        const body = btoa(unescape(encodeURIComponent(rebuildIndexJs())));
+        await ghPut('image-index.js', body, `Update image-index.js (+${newPaths.length} custom)`);
+        toast('image-index.js updated', 'ok', 'Site rebuild starts in a few seconds.');
+      } catch (e) {
+        toast('Could not update image-index.js', 'err', e.message);
+      }
+    }
 
-    loadCurrent();
-  </script>
+    let totalSel = 0, projWith = 0;
+    for (const k in state) if (state[k] && state[k].size > 0) { totalSel += state[k].size; projWith++; }
+    document.getElementById('stats').textContent =
+      `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+    const head = document.querySelector(`#sec-${slug} .count`);
+    const all = [...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])];
+    if (head) head.textContent = `${(state[slug] || new Set()).size} / ${all.length} selected`;
+  }
+
+  document.getElementById('save').addEventListener('click', async () => {
+    if (!cfg.token) return toast('Set up token first', 'err', 'Use ⬇ Download as fallback');
+    const btn = document.getElementById('save');
+    btn.disabled = true; btn.textContent = '…pushing';
+    try {
+      const text = buildSelectionsJs();
+      const b64  = btoa(unescape(encodeURIComponent(text)));
+      await ghPut('selections.js', b64, 'Update selections.js via picker');
+      toast('selections.js pushed ✓', 'ok', 'Live in 30–60 seconds');
+    } catch (e) { toast('Push failed', 'err', e.message); }
+    finally { btn.disabled = false; btn.textContent = '⬆ Push selections'; }
+  });
+  document.getElementById('dl').addEventListener('click', () => {
+    const blob = new Blob([buildSelectionsJs()], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'selections.js'; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(buildSelectionsJs()); toast('Copied to clipboard', 'ok'); }
+    catch (e) { toast('Copy failed', 'err', e.message); }
+  });
+  document.getElementById('loadCurrent').addEventListener('click', loadCurrent);
+  document.getElementById('clearAll').addEventListener('click', clearAll);
+
+  loadCurrent();
+</script>
 </body>
 </html>

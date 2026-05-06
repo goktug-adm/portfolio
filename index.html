@@ -3,99 +3,243 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Göktuğ Arda Gök — Mechatronics Portfolio</title>
-  <meta name="description" content="Mechatronics engineering portfolio: spherical robotics, vision-based control, machine learning, drone swarms, PLC automation and CAD." />
+  <title>Göktuğ Arda Gök — Project Portfolio</title>
+  <meta name="description" content="Project portfolio of Göktuğ Arda Gök — Sabancı University, Mechatronics Engineering. 15 selected engineering projects from coursework, graduation work, and a defense-industry internship." />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="hero">
+<div class="page">
+
+  <!-- Running header -->
+  <header class="runhead">
     <div class="container">
-      <p class="eyebrow">Mechatronics Engineering · Sabancı University</p>
-      <h1>Göktuğ Arda Gök</h1>
-      <p class="tagline">
-        I build systems that sense, decide and move — from a drift-compensated
-        spherical robot to vision-based orientation tracking, drone swarm
-        simulations and PLC-driven factory cells. Selected reports from
-        coursework, a graduation project and a defense-industry internship.
-      </p>
-      <ul class="meta">
-        <li><span>Focus</span> Robotics · Controls · Vision</li>
-        <li><span>Tools</span> MATLAB/Simulink · Python · ROS 2 · TwinCAT · SolidWorks</li>
-        <li><span>Email</span> <a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></li>
-      </ul>
+      <div class="left"><strong>Göktuğ Arda Gök</strong><span>Project Portfolio</span></div>
+      <div class="right">Mechatronics · '26</div>
     </div>
   </header>
 
-  <main class="container">
-    <nav class="filter" aria-label="Filter projects by category">
-      <button class="chip is-active" data-filter="all">All</button>
-      <button class="chip" data-filter="robotics">Robotics &amp; Vision</button>
-      <button class="chip" data-filter="controls">Controls &amp; Dynamics</button>
-      <button class="chip" data-filter="mechatronics">Mechatronics &amp; PLC</button>
-      <button class="chip" data-filter="ml">Machine Learning</button>
-      <button class="chip" data-filter="cad">CAD &amp; Manufacturing</button>
-      <button class="chip" data-filter="other">Other</button>
-    </nav>
+  <main>
+    <div class="container">
+      <p class="date-line" id="dateLine"></p>
 
-    <section class="grid" id="grid"></section>
+      <!-- Name plate -->
+      <section class="nameplate">
+        <div class="nameplate__head">
+          <h1>Göktuğ Arda Gök</h1>
+          <span class="nameplate__tag">Mechatronics · '26</span>
+        </div>
+        <p class="nameplate__sub">Sabancı University — Faculty of Engineering &amp; Natural Sciences</p>
+        <hr class="nameplate__rule">
+        <div class="nameplate__contact">
+          <div><span>✦</span>Mechatronics Engineering</div>
+          <div><span>✉</span><a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></div>
+          <div><span>☎</span>+90 532 203 71 66</div>
+        </div>
+      </section>
+
+      <!-- Section: Cover intro -->
+      <section>
+        <h1 class="section-title">Project Portfolio</h1>
+        <p class="section-intro" style="font-style: normal; color: var(--text); font-size: 16.5px">
+          B.Sc. Mechatronics Engineering — Sabancı University
+        </p>
+
+        <p>
+          This portfolio collects fifteen selected projects from my undergraduate
+          coursework, graduation work, and a defense-industry internship at
+          Altınay Savunma. Each entry has its own page documenting the problem,
+          methodology, results, and figures from the original report.
+        </p>
+        <p>
+          Project descriptions are drawn directly from the corresponding course
+          reports. Original PDFs are linked from each project page. The
+          portfolio spans control engineering, robotics, computer vision,
+          machine learning, mechatronic system design, and CAD —
+          deliberately broad, in line with the curriculum.
+        </p>
+
+        <!-- KPI strip -->
+        <div class="kpi">
+          <div><p class="label">Projects</p><p class="value">15</p></div>
+          <div><p class="label">Graduation</p><p class="value">28 Jan 2026</p></div>
+          <div><p class="label">CGPA</p><p class="value">2.88 / 4.00</p></div>
+          <div><p class="label">ECTS</p><p class="value">240</p></div>
+        </div>
+      </section>
+
+      <!-- §01 — Project summary table -->
+      <div class="title-block">
+        <p class="section-mark">§ 01</p>
+        <h2 class="section-title">Project Summary</h2>
+        <hr class="section-rule">
+        <p class="section-intro">
+          Complete list of the projects in this portfolio with their course
+          codes, dates, and disciplines. Each title links to the project's
+          dedicated page.
+        </p>
+
+        <div class="filter" id="filter">
+          <button class="chip is-active" data-filter="all">All disciplines</button>
+          <button class="chip" data-filter="robotics">Robotics &amp; Vision</button>
+          <button class="chip" data-filter="controls">Controls &amp; Dynamics</button>
+          <button class="chip" data-filter="mechatronics">Mechatronics &amp; PLC</button>
+          <button class="chip" data-filter="ml">Machine Learning</button>
+          <button class="chip" data-filter="cad">CAD &amp; Manufacturing</button>
+          <button class="chip" data-filter="other">Other</button>
+        </div>
+
+        <table class="summary-table" id="summaryTable">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Title</th>
+              <th>Date</th>
+              <th>Discipline</th>
+            </tr>
+          </thead>
+          <tbody id="summaryBody"></tbody>
+        </table>
+      </div>
+
+      <!-- §02..§NN — Module cards by discipline -->
+      <div id="modules"></div>
+    </div>
   </main>
 
-  <footer>
+  <!-- Running footer -->
+  <footer class="runfoot">
     <div class="container">
-      <p>© <span id="year"></span> Göktuğ Arda Gök · Sabancı University, Mechatronics Engineering. Reports remain © their respective authors.</p>
+      <div>Sabancı University</div>
+      <div class="center">Project Portfolio</div>
+      <div><a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></div>
     </div>
   </footer>
+</div>
 
-  <script src="projects.js"></script>
-  <script src="image-index.js"></script>
-  <script src="selections.js"></script>
-  <script>
-    document.getElementById('year').textContent = new Date().getFullYear();
+<script src="projects.js"></script>
+<script src="image-index.js"></script>
+<script src="selections.js"></script>
+<script>
+  // Date line in PDF style: DD.MM.YYYY
+  const d = new Date();
+  document.getElementById('dateLine').textContent =
+    String(d.getDate()).padStart(2, '0') + '.' +
+    String(d.getMonth() + 1).padStart(2, '0') + '.' +
+    d.getFullYear();
 
-    function pickCover(slug) {
-      const sel = (window.SELECTIONS || {})[slug];
-      if (sel && sel.length) return sel[0];
-      const idx = (window.IMAGE_INDEX || []).find(p => p.slug === slug);
-      if (idx && (idx.custom || []).length) return idx.custom[0];
-      if (idx && idx.figures.length) return idx.figures[0];
-      return `images/${slug}/page-1.jpg`;
-    }
+  // Map category keys → display + accent class
+  const CATS = [
+    { key: 'robotics',      label: 'Robotics & Vision' },
+    { key: 'controls',      label: 'Controls & Dynamics' },
+    { key: 'mechatronics',  label: 'Mechatronics & PLC' },
+    { key: 'ml',            label: 'Machine Learning' },
+    { key: 'cad',           label: 'CAD & Manufacturing' },
+    { key: 'other',         label: 'Other' }
+  ];
+  const CAT_CLASS = {
+    robotics: 'code-badge--robotics',
+    controls: 'code-badge--controls',
+    mechatronics: 'code-badge--mech',
+    ml: 'code-badge--ml',
+    cad: 'code-badge--cad',
+    other: 'code-badge--other'
+  };
 
-    const grid = document.getElementById('grid');
-    const cards = window.PROJECTS.map(p => {
-      const cover = pickCover(p.slug);
-      const tagsHtml = p.tags.slice(0, 4).map(t => `<li>${t}</li>`).join('');
-      const featured = p.featured ? ' card--featured' : '';
-      const tagsAttr = p.categories.join(' ');
-      return `
-        <a class="card${featured}" href="project.html?slug=${encodeURIComponent(p.slug)}" data-tags="${tagsAttr}">
-          <div class="card__cover"><img src="${cover}" alt="" loading="lazy"></div>
-          <div class="card__body">
-            <div class="card__head">
-              <span class="badge ${p.badgeClass}">${p.badge}</span>
-              <span class="course">${p.course}</span>
-            </div>
-            <h2>${p.title}</h2>
-            <p>${p.summary}</p>
-            <ul class="tags">${tagsHtml}</ul>
-          </div>
-        </a>`;
-    }).join('');
-    grid.innerHTML = cards;
+  // Pull a short course code from `course` field (e.g. "ME 308 · Lab 5" → "ME 308")
+  function shortCode(course) {
+    const m = course.match(/^([A-Z]{2,4}\s?\d{3,4}[A-Z]?)/);
+    if (m) return m[1];
+    // Fallback: first word(s) before separator
+    return course.split(/[·•|]/)[0].trim();
+  }
 
-    const chips = document.querySelectorAll('.chip');
-    const cardEls = grid.querySelectorAll('.card');
-    chips.forEach(chip => {
-      chip.addEventListener('click', () => {
-        chips.forEach(c => c.classList.remove('is-active'));
-        chip.classList.add('is-active');
-        const f = chip.dataset.filter;
-        cardEls.forEach(card => {
-          const tags = card.dataset.tags.split(' ');
-          card.style.display = (f === 'all' || tags.includes(f)) ? '' : 'none';
-        });
+  function primaryCat(p) {
+    for (const c of CATS) if (p.categories.includes(c.key)) return c.key;
+    return 'other';
+  }
+
+  // ---- Build summary table ----
+  const tbody = document.getElementById('summaryBody');
+  tbody.innerHTML = window.PROJECTS.map(p => {
+    const cat = primaryCat(p);
+    const catLabel = CATS.find(c => c.key === cat).label;
+    return `
+      <tr data-cat="${p.categories.join(' ')}">
+        <td class="code">${shortCode(p.course)}</td>
+        <td><a href="project.html?slug=${encodeURIComponent(p.slug)}">${p.title}</a></td>
+        <td class="semester">${p.date}</td>
+        <td class="cat">${catLabel}</td>
+      </tr>`;
+  }).join('') + `
+    <tr class="totals">
+      <td colspan="2">Total — ${window.PROJECTS.length} projects across ${CATS.filter(c => window.PROJECTS.some(p => p.categories.includes(c.key))).length} disciplines</td>
+      <td colspan="2"></td>
+    </tr>`;
+
+  // ---- Build module sections grouped by category ----
+  const modulesEl = document.getElementById('modules');
+  let secIdx = 1;
+  modulesEl.innerHTML = CATS.filter(c =>
+    window.PROJECTS.some(p => primaryCat(p) === c.key)
+  ).map(cat => {
+    secIdx++;
+    const num = String(secIdx).padStart(2, '0');
+    const projects = window.PROJECTS.filter(p => primaryCat(p) === cat.key);
+    const intro = {
+      robotics: "Projects spanning mobile and aerial robotics, computer-vision sensing, and the kinematics of a parallel spherical manipulator.",
+      controls: "Closed-loop control work — current loops, cascaded controllers, motor position control, and quadrotor dynamics.",
+      mechatronics: "Industrial mechatronics labs on Beckhoff PLCs and TwinCAT, covering sequential control, PID temperature loops, and servo motion.",
+      ml: "Coursework in classical and deep machine learning — sentiment classification baselines and a transfer-learning image classifier.",
+      cad: "CAD assemblies and a manufacturing-process study, working through real-world materials, tolerances, and tooling.",
+      other: "Adjacent work that doesn't fit the engineering categories above — entrepreneurship and applied AI."
+    }[cat.key] || '';
+    return `
+      <div class="title-block">
+        <p class="section-mark">§ ${num}</p>
+        <h2 class="section-title">${cat.label}</h2>
+        <hr class="section-rule">
+        <p class="section-intro">${intro}</p>
+        ${projects.map(p => moduleCard(p, cat.key)).join('')}
+      </div>`;
+  }).join('');
+
+  function moduleCard(p, cat) {
+    const meta = [
+      p.date,
+      p.course.replace(/^[A-Z]{2,4}\s?\d{3,4}[A-Z]?\s*[·•|]?\s*/, '') || p.course,
+      p.collaborators ? `with ${p.collaborators}` : null,
+      p.supervisor    ? `Supervisor: ${p.supervisor}` : null
+    ].filter(Boolean).map(x => `<li>${x}</li>`).join('');
+    const tagLine = p.tags.slice(0, 5).join(' · ');
+    return `
+      <article class="module" data-cat="${p.categories.join(' ')}">
+        <div class="module__head">
+          <span class="code-badge ${CAT_CLASS[cat] || ''}">${shortCode(p.course)}</span>
+          <h3 class="module__title"><a href="project.html?slug=${encodeURIComponent(p.slug)}">${p.title}</a></h3>
+        </div>
+        <ul class="module__meta">${meta}</ul>
+        <div class="module__body">
+          <p>${p.summary}</p>
+        </div>
+        <p style="font-family: var(--sans); font-size: 12.5px; color: var(--muted); margin: 8px 0 0">
+          <strong style="color: var(--text); font-weight: 600">Tools.</strong> ${tagLine}
+        </p>
+        <p class="module__cta"><a href="project.html?slug=${encodeURIComponent(p.slug)}">Read the project →</a></p>
+      </article>`;
+  }
+
+  // Filter chips also affect the table + module visibility
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.chip').forEach(c => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      const f = chip.dataset.filter;
+      document.querySelectorAll('[data-cat]').forEach(el => {
+        const cats = el.dataset.cat.split(' ');
+        el.style.display = (f === 'all' || cats.includes(f)) ? '' : 'none';
       });
     });
-  </script>
+  });
+</script>
 </body>
 </html>
