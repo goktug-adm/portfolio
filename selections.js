@@ -52,5 +52,19 @@ window.SELECTIONS = {
     "images/v12-engine/page-9.jpg",
     "images/v12-engine/page-11.jpg",
     "images/v12-engine/page-12.jpg"
+  ],
+  "siyel": [
+    "images/siyel/page-1.jpg",
+    "images/siyel/page-2.jpg",
+    "images/siyel/page-3.jpg",
+    "images/siyel/page-4.jpg",
+    "images/siyel/page-5.jpg",
+    "images/siyel/page-6.jpg",
+    "images/siyel/page-7.jpg",
+    "images/siyel/page-8.jpg",
+    "images/siyel/page-9.jpg",
+    "images/siyel/page-10.jpg",
+    "images/siyel/page-11.jpg",
+    "images/siyel/page-12.jpg"
   ]
 };
