@@ -17,7 +17,8 @@ window.SELECTIONS = {
     "custom/drone-swarm/formation_editedgif-moto8503.gif",
     "custom/drone-swarm/obs_avoid_attack-moto88ib.gif",
     "custom/drone-swarm/drone-swarm-scaled-moto8hjb.jpg",
-    "custom/drone-swarm/perdixswarm-moto8qc6.gif"
+    "custom/drone-swarm/perdixswarm-moto8qc6.gif",
+    "custom/drone-swarm/3dsim-MadewithClipchamp-ezgif-com-video--mou0253n.gif"
   ],
   "celeba-vgg16": [
     "custom/celeba-vgg16/Ekran-g-r-nt-s-2026-05-06-100420-motppum2.png",
