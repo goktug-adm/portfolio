@@ -9,7 +9,8 @@ window.SELECTIONS = {
     "custom/spherical-graduation/2372c52c-2cf7-4d57-bb87-738ef39d2c1b-motodb81.jpg",
     "custom/spherical-graduation/panel-tracker_pi2-1-motofuz4.png",
     "custom/spherical-graduation/image-motpjyzi.png",
-    "custom/spherical-graduation/Ekran-g-r-nt-s-2026-05-06-100242-motpn6dk.png"
+    "custom/spherical-graduation/Ekran-g-r-nt-s-2026-05-06-100242-motpn6dk.png",
+    "custom/spherical-graduation/Spherical_robot-motz1ugb.jpg"
   ],
   "drone-swarm": [
     "custom/drone-swarm/formation_edited_v2-moto81yo.gif",
@@ -19,28 +20,36 @@ window.SELECTIONS = {
     "custom/drone-swarm/perdixswarm-moto8qc6.gif"
   ],
   "celeba-vgg16": [
-    "custom/celeba-vgg16/Ekran-g-r-nt-s-2026-05-06-100420-motppum2.png"
+    "custom/celeba-vgg16/Ekran-g-r-nt-s-2026-05-06-100420-motppum2.png",
+    "custom/celeba-vgg16/Ekran-g-r-nt-s-2026-05-06-100412-motz30ni.png"
   ],
   "me408-control": [
     "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100722-motpt8ed.png",
     "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100929-motpwnfr.png",
-    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100837-motpwp2q.png"
+    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100837-motpwp2q.png",
+    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100913-motz4xzu.png",
+    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100824-motz4wj9.png"
   ],
   "quadrotor": [
     "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101459-motq3dod.png",
     "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101405-motq3f94.png",
-    "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101550-motq4kh8.png"
+    "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101550-motq4kh8.png",
+    "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101550-motz5zin.png",
+    "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101157-motz5y5z.png"
   ],
   "ev3-odometry": [
     "custom/ev3-odometry/Ekran-g-r-nt-s-2026-05-06-102059-motqbzgl.png",
-    "custom/ev3-odometry/Ekran-g-r-nt-s-2026-05-06-102138-motqc185.png"
+    "custom/ev3-odometry/Ekran-g-r-nt-s-2026-05-06-102138-motqc185.png",
+    "custom/ev3-odometry/Ekran-g-r-nt-s-2026-05-06-102059-motz6eef.png",
+    "custom/ev3-odometry/Ekran-g-r-nt-s-2026-05-06-102138-motz6g31.png"
   ],
   "me308-lab5": [
     "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motqe9u0.png",
     "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motqejc6.png"
   ],
   "me308-lab7": [
-    "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motqkzk1.png"
+    "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motqkzk1.png",
+    "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motz90ph.png"
   ],
   "patent-sta-slider": [
     "custom/patent-sta-slider/download-motxvcab.jpg",
@@ -69,6 +78,18 @@ window.SELECTIONS = {
   ],
   "v12-engine": [
     "custom/v12-engine/Ekran-g-r-nt-s-2026-05-06-140702-motydr34.png"
+  ],
+  "me308-lab8": [
+    "custom/me308-lab8/Ekran-g-r-nt-s-2026-05-06-143123-motz9ih9.png"
+  ],
+  "spherical-rt": [
+    "custom/spherical-rt/images-motzb6q2.png"
+  ],
+  "vision-orientation": [
+    "custom/vision-orientation/262c8b5e-a084-4263-9cfe-803af2c95762-motzckmb.jpg",
+    "custom/vision-orientation/2372c52c-2cf7-4d57-bb87-738ef39d2c1b-motzcmru.jpg",
+    "custom/vision-orientation/Ekran-g-r-nt-s-2026-05-06-100242-motzcu4u.png",
+    "images/vision-orientation/page-1.jpg"
   ]
 };
 
@@ -76,7 +97,13 @@ window.COVERS = {
   "patent-sta-slider": "custom/patent-sta-slider/Ekran-g-r-nt-s-2026-05-06-140042-moty69al.png",
   "patent-sep-2000": "images/patent-sep-2000/page-1.jpg",
   "vision-orientation": "images/vision-orientation/page-1.jpg",
-  "spherical-rt": "images/spherical-rt/page-1.jpg",
-  "spn-ib-3000": "custom/spn-ib-3000/Ekran-g-r-nt-s-2026-05-06-140434-motyc05n.png",
-  "v12-engine": "custom/v12-engine/Ekran-g-r-nt-s-2026-05-06-140702-motydr34.png"
+  "spherical-rt": "custom/spherical-rt/images-motzb6q2.png",
+  "v12-engine": "custom/v12-engine/Ekran-g-r-nt-s-2026-05-06-140702-motydr34.png",
+  "spherical-graduation": "custom/spherical-graduation/Spherical_robot-motz1ugb.jpg",
+  "celeba-vgg16": "custom/celeba-vgg16/Ekran-g-r-nt-s-2026-05-06-100412-motz30ni.png",
+  "me408-control": "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100824-motz4wj9.png",
+  "quadrotor": "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101550-motz5zin.png",
+  "spn-ib-3000": "custom/spn-ib-3000/Ekran-g-r-nt-s-2026-05-06-140427-motybwxj.png",
+  "me308-lab7": "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motz90ph.png",
+  "me308-lab8": "custom/me308-lab8/Ekran-g-r-nt-s-2026-05-06-143123-motz9ih9.png"
 };
