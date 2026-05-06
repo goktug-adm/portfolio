@@ -141,20 +141,25 @@
     <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
   `;
 
-  // Gallery
+  // Gallery — show every PDF page rendered for this project, with any
+  // user-uploaded custom images first. selections.js can still override.
   const gallery = document.getElementById('d-gallery');
   const ix = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug)
            || { figures: [], pages: [], custom: [] };
   const picked = (window.SELECTIONS || {})[project.slug];
   let imgs;
-  if (picked && picked.length) imgs = picked;
-  else if ((ix.custom || []).length || ix.figures.length) imgs = [...(ix.custom || []), ...ix.figures];
-  else imgs = ix.pages.slice(0, 8);
+  if (picked && picked.length) {
+    imgs = picked;
+  } else {
+    imgs = [...(ix.custom || []), ...(ix.pages || [])];
+    // No pages? fall back to embedded figures.
+    if (!imgs.length) imgs = ix.figures || [];
+  }
   if (!imgs.length) {
     gallery.parentElement.style.display = 'none';
   }
   gallery.innerHTML = imgs.map((src, i) => `
-    <button data-idx="${i}"><img src="${src}" alt="Figure ${i + 1}" loading="lazy"></button>
+    <button data-idx="${i}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
   `).join('');
 
   // Lightbox
