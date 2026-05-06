@@ -295,6 +295,50 @@ window.PROJECTS = [
   },
 
   {
+    slug: "patent-linear-track",
+    title: "Linear Motion Unit — Industrial Automation System",
+    course: "Türk Patent · Tescil No 2024 010627",
+    date: "Filed Dec 2024 · Registered Sep 2025",
+    badge: "Registered Design",
+    badgeClass: "badge--cad",
+    categories: ["patents", "cad"],
+    pdf: "pdfs/Patent_2024_010627_LinearTrack.pdf",
+    images: 4,
+    collaborators: null,
+    supervisor: null,
+    summary: "A linear motion unit (industrial automation track) for moving robots and heavy payloads along a precise straight-line axis. Registered design held by the candidate (Türkiye Patent No 2024/010627, Locarno class 15-09).",
+    tags: ["Industrial design", "Linear track", "Robot automation", "Mechanical design", "Türk Patent"],
+    sections: [
+      { h: "Registered Design", b: "<p><strong>Türkiye Patent &amp; Trademark Office</strong> — Tasarım Tescil Belgesi <strong>No 2024 010627</strong>. Registered design held in the name of <strong>Göktuğ Arda Gök</strong>, Republic of Turkey. Filed and registered on <strong>16 December 2024</strong>; certificate issued on <strong>3 September 2025</strong>; protected for <strong>5 years</strong> under Industrial Property Law No 6769. Locarno classification <code>15-09</code> (machines for handling and positioning).</p>" },
+      { h: "What it is", b: "<p>A <strong>linear motion unit</strong> for industrial automation: a track-and-carriage system that moves heavy payloads — typically a robot arm — along a straight axis with high repeatability. The covered modular design protects the internal drive train from falling particles and liquid intrusion, and is offered in floor, ceiling and elevated mounting positions.</p><p>This is the unit commercialised by ADMEX as the <strong>STA / STK Steel Series</strong> robot tracks, including the <strong>STA-060</strong> (max payload 6,000 kg, max speed 60 m/min, repeatability ±0.01 mm, 10 million-meter service life) and the <strong>STK-SEP-2000</strong> ATEX Zone 21–certified <em>exproof painting track</em> for paint booths and other dirty/explosive environments.</p>" },
+      { h: "Design Variations", b: "<p>The certificate covers four design views (1.1 – 1.4) of the linear motion unit, all owned solely by the candidate as the designer.</p><ul><li>Modular, extendable design — adapted to the customer's stroke length in 1 m steps.</li><li>Inner cable chain (no external cable carrier).</li><li>Optional walk-on cover plates and forklift-grade load capacity.</li><li>Exproof option for ATEX Zone 21 paint and dust environments.</li></ul>" },
+      { h: "Reference Documents", b: "<p>The certificate, registry record and design views live in the gallery below. The corresponding ADMEX product catalogue (STK-SEP-2000 / STA Steel Series) is also bundled here for context — figures from the catalogue are extracted into the figures gallery.</p>" }
+    ]
+  },
+
+  {
+    slug: "patent-profile",
+    title: "Aluminium Structural Profile — Multi-Variation Design",
+    course: "Türk Patent · Tescil No 2024 010626",
+    date: "Filed Dec 2024 · Registered Jun 2025",
+    badge: "Registered Design",
+    badgeClass: "badge--cad",
+    categories: ["patents", "cad"],
+    pdf: "pdfs/Patent_2024_010626_Profile.pdf",
+    images: 7,
+    collaborators: null,
+    supervisor: null,
+    summary: "Multi-variation industrial design for an extruded aluminium structural profile family — three related cross-section designs registered together. Türkiye Patent No 2024/010626, Locarno class 25-01.",
+    tags: ["Industrial design", "Aluminium extrusion", "Structural profile", "Türk Patent", "Multi-design"],
+    sections: [
+      { h: "Registered Design", b: "<p><strong>Türkiye Patent &amp; Trademark Office</strong> — Tasarım Tescil Belgesi <strong>No 2024 010626</strong>. Multi-design (<em>Çoklu</em>) registration in the name of <strong>Göktuğ Arda Gök</strong>, Republic of Turkey. Filed and registered on <strong>16 December 2024</strong>; certificate issued on <strong>18 June 2025</strong>; protected for <strong>5 years</strong> under Industrial Property Law No 6769. Locarno classification <code>25-01</code> (building units &amp; construction elements).</p>" },
+      { h: "What it is", b: "<p>An <strong>extruded aluminium structural profile</strong> — a load-bearing modular building element used as the spine of industrial automation frames, machine guarding, jigs, fixtures, and the carcass of the linear motion units in the companion patent. The certificate covers <strong>three related cross-section variations</strong> (Profil 1, 2, 3), each registered as a separate design under one multi-design application.</p>" },
+      { h: "Why three variations", b: "<p>The three variations share the same family DNA — slot geometry, dimensional series, fastening pattern — but differ in cross-sectional area and load class. Filing as a multi-design protects the family as a coherent whole rather than a single isolated profile, making it harder to design around.</p>" },
+      { h: "Reference Documents", b: "<p>Certificate, registry record and the four design plates (1.1 – 1.4) are reproduced below.</p>" }
+    ]
+  },
+
+  {
     slug: "siyel",
     title: "Siyel — AI-based Kitchen Hygiene, Safety & Operations Monitoring",
     course: "Startup · TÜBİTAK BİGG track · Pitch deck",

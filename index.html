@@ -49,9 +49,9 @@
         </p>
 
         <div class="kpi">
-          <div><p class="label">Projects</p><p class="value">15</p></div>
-          <div><p class="label">Disciplines</p><p class="value">6</p></div>
-          <div><p class="label">CGPA</p><p class="value">2.88 / 4.00</p></div>
+          <div><p class="label">Projects</p><p class="value" id="kpiProjects">—</p></div>
+          <div><p class="label">Disciplines</p><p class="value" id="kpiDisciplines">—</p></div>
+          <div><p class="label">Patents</p><p class="value" id="kpiPatents">—</p></div>
           <div><p class="label">ECTS</p><p class="value">240</p></div>
         </div>
       </section>
@@ -103,6 +103,8 @@
     d.getFullYear();
 
   const CATS = [
+    { key: 'patents',      label: 'Patents & Registered Designs',
+      intro: "Industrial designs registered with the Türkiye Patent &amp; Trademark Office in the candidate's name." },
     { key: 'robotics',     label: 'Robotics & Vision',
       intro: "Mobile and aerial robotics, computer-vision sensing, and the kinematics of a parallel spherical manipulator." },
     { key: 'controls',     label: 'Controls & Dynamics',
@@ -117,6 +119,7 @@
       intro: "Adjacent work that doesn't fit the engineering categories above — entrepreneurship and applied AI." }
   ];
   const CAT_CLASS = {
+    patents: 'code-badge--cad',
     robotics: 'code-badge--robotics',
     controls: 'code-badge--controls',
     mechatronics: 'code-badge--mech',
@@ -146,6 +149,13 @@
     }
     return '';
   }
+
+  // ---- KPI strip values from data ----
+  const presentCats = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key));
+  document.getElementById('kpiProjects').textContent = window.PROJECTS.length;
+  document.getElementById('kpiDisciplines').textContent = presentCats.length;
+  document.getElementById('kpiPatents').textContent =
+    window.PROJECTS.filter(p => p.categories.includes('patents')).length;
 
   // ---- Step 1 — discipline cards ----
   const catGrid = document.getElementById('catGrid');

@@ -59,4 +59,6 @@ window.SELECTIONS = {
 window.COVERS = {
   // Set via picker (⭐). Examples:
   // "drone-swarm": "custom/drone-swarm/drone-swarm-scaled-moto8hjb.jpg",
+  "patent-linear-track": "figures/patent-linear-track/catalog-002-002.jpg",
+  "patent-profile":      "images/patent-profile/page-3.jpg"
 };
