@@ -28,7 +28,8 @@ window.SELECTIONS = {
     "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100929-motpwnfr.png",
     "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100837-motpwp2q.png",
     "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100913-motz4xzu.png",
-    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100824-motz4wj9.png"
+    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100824-motz4wj9.png",
+    "custom/me408-control/Ekran-g-r-nt-s-2026-05-06-100722-motzdxum.png"
   ],
   "quadrotor": [
     "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101459-motq3dod.png",
@@ -45,7 +46,9 @@ window.SELECTIONS = {
   ],
   "me308-lab5": [
     "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motqe9u0.png",
-    "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motqejc6.png"
+    "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motqejc6.png",
+    "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motzeh1f.png",
+    "images/me308-lab5/page-9.jpg"
   ],
   "me308-lab7": [
     "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motqkzk1.png",
@@ -69,7 +72,9 @@ window.SELECTIONS = {
     "custom/patent-sep-2000/download-moty7ap8.jpg",
     "custom/patent-sep-2000/download-moty7elm.jpg",
     "custom/patent-sep-2000/download-moty7g04.jpg",
-    "custom/patent-sep-2000/download-moty7hrn.jpg"
+    "custom/patent-sep-2000/download-moty7hrn.jpg",
+    "custom/patent-sep-2000/RGH_SGS_STK2_BROSUR_RENDER_1RENDER_2-732-motzfz56.png",
+    "images/patent-sep-2000/page-1.jpg"
   ],
   "spn-ib-3000": [
     "custom/spn-ib-3000/Ekran-g-r-nt-s-2026-05-06-140427-motybwxj.png",
@@ -95,7 +100,6 @@ window.SELECTIONS = {
 
 window.COVERS = {
   "patent-sta-slider": "custom/patent-sta-slider/Ekran-g-r-nt-s-2026-05-06-140042-moty69al.png",
-  "patent-sep-2000": "images/patent-sep-2000/page-1.jpg",
   "vision-orientation": "images/vision-orientation/page-1.jpg",
   "spherical-rt": "custom/spherical-rt/images-motzb6q2.png",
   "v12-engine": "custom/v12-engine/Ekran-g-r-nt-s-2026-05-06-140702-motydr34.png",
@@ -105,5 +109,7 @@ window.COVERS = {
   "quadrotor": "custom/quadrotor/Ekran-g-r-nt-s-2026-05-06-101550-motz5zin.png",
   "spn-ib-3000": "custom/spn-ib-3000/Ekran-g-r-nt-s-2026-05-06-140427-motybwxj.png",
   "me308-lab7": "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motz90ph.png",
-  "me308-lab8": "custom/me308-lab8/Ekran-g-r-nt-s-2026-05-06-143123-motz9ih9.png"
+  "me308-lab8": "custom/me308-lab8/Ekran-g-r-nt-s-2026-05-06-143123-motz9ih9.png",
+  "me308-lab5": "custom/me308-lab5/Ekran-g-r-nt-s-2026-05-06-102304-motzeh1f.png",
+  "patent-sep-2000": "custom/patent-sep-2000/RGH_SGS_STK2_BROSUR_RENDER_1RENDER_2-732-motzfz56.png"
 };
