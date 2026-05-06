@@ -87,20 +87,28 @@ you don't pick anything, you still get sensible defaults.
 
 ### Add your own photos to a project
 
-1. Drop any number of `.jpg` / `.png` / `.webp` files into
-   `custom/<project-slug>/`. Filenames don't matter; the project slugs are the
-   folder names.
-2. Run **`regen-index.ps1`** from PowerShell to refresh `image-index.js`:
+**Easiest — direct upload from picker (one-time GitHub setup):**
 
+1. Open **`picker.html`**, click **⚙** top-right, then
+   [create a Personal Access Token](https://github.com/settings/tokens/new?scopes=public_repo&description=Portfolio%20picker)
+   with the `public_repo` scope. Paste, **Save**. Token lives only in your
+   browser's `localStorage`.
+2. Scroll to a project, **drag & drop** images onto its drop zone (or click to
+   pick files). Each upload shows a live tile, then commits straight to
+   `custom/<slug>/` on GitHub. `image-index.js` is updated automatically.
+3. Tick the new tiles and click **⬆ Push selections to GitHub** — done.
+4. Site rebuilds in 30–60 seconds.
+
+**Manual fallback (no token):**
+
+1. Drop `.jpg` / `.png` / `.webp` files into `custom/<project-slug>/`.
+2. Run `regen-index.ps1` to refresh `image-index.js`:
    ```powershell
-   pwsh ./regen-index.ps1
-   # or on Windows PowerShell 5.1:
    powershell -ExecutionPolicy Bypass -File ./regen-index.ps1
    ```
-
-3. Open `picker.html` — your new images appear with a **yellow border** and a
-   `custom` label. Tick the ones you want shown, download `selections.js`.
-4. Commit & push everything (`custom/`, `image-index.js`, `selections.js`).
+3. Open `picker.html`, tick the new tiles, **⬇ Download selections.js**, drop
+   it back into the repo.
+4. `git add . && git commit -m "..." && git push`.
 
 If you skip the picker entirely, custom images automatically take priority
 over the auto-extracted figures — they show up on the detail page and as the
