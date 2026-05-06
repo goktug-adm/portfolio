@@ -130,6 +130,34 @@
   document.getElementById('d-prose').innerHTML = project.sections
     .map(s => `<h2>${s.h}</h2>${s.b}`).join('');
 
+  // Image sources for this project
+  const ix = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug)
+           || { figures: [], pages: [], custom: [] };
+  const picked  = (window.SELECTIONS || {})[project.slug];
+  const customs = ix.custom || [];
+  // Sidebar mini-gallery: prefer curated picks; else fall back to uploads
+  const sideImgs = (picked && picked.length) ? picked : customs;
+  // Bottom gallery: always the full report (every PDF page)
+  const reportImgs = (ix.pages && ix.pages.length) ? ix.pages : (ix.figures || []);
+
+  // Combined list for the lightbox so prev/next walks all of them
+  const allImgs = [];
+  const seen = new Set();
+  for (const src of [...sideImgs, ...reportImgs]) {
+    if (!seen.has(src)) { seen.add(src); allImgs.push(src); }
+  }
+
+  // Sidebar mini-gallery markup
+  const miniHtml = sideImgs.length ? `
+    <h3>Selected figures</h3>
+    <div class="mini-gallery">
+      ${sideImgs.map((src, i) => `
+        <button class="mini-tile" data-allidx="${allImgs.indexOf(src)}" aria-label="Open figure ${i + 1}">
+          <img src="${src}" alt="" loading="lazy">
+        </button>`).join('')}
+    </div>
+  ` : '';
+
   document.getElementById('d-sidebar').innerHTML = `
     <h3>Course</h3><p>${project.course}</p>
     <h3>Date</h3><p>${project.date}</p>
@@ -139,28 +167,22 @@
     <ul class="tags">${project.tags.map(t => `<li>${t}</li>`).join('')}</ul>
     <h3 style="margin-top: 22px">Source</h3>
     <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
+    ${miniHtml}
   `;
 
-  // Gallery — show every PDF page rendered for this project, with any
-  // user-uploaded custom images first. selections.js can still override.
+  // Bottom gallery — full report
   const gallery = document.getElementById('d-gallery');
-  const ix = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug)
-           || { figures: [], pages: [], custom: [] };
-  const picked = (window.SELECTIONS || {})[project.slug];
-  let imgs;
-  if (picked && picked.length) {
-    imgs = picked;
-  } else {
-    imgs = [...(ix.custom || []), ...(ix.pages || [])];
-    // No pages? fall back to embedded figures.
-    if (!imgs.length) imgs = ix.figures || [];
-  }
-  if (!imgs.length) {
+  const galleryHeading = document.querySelector('.gallery-section h2');
+  if (galleryHeading) galleryHeading.textContent = sideImgs.length ? 'Pages from the report' : 'From the report';
+  if (!reportImgs.length) {
     gallery.parentElement.style.display = 'none';
   }
-  gallery.innerHTML = imgs.map((src, i) => `
-    <button data-idx="${i}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
+  gallery.innerHTML = reportImgs.map((src, i) => `
+    <button data-allidx="${allImgs.indexOf(src)}" aria-label="Open page ${i + 1}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
   `).join('');
+
+  // Use the combined list for the lightbox so prev/next walks figures + pages
+  const imgs = allImgs;
 
   // Lightbox
   const lb = document.getElementById('lightbox');
@@ -169,7 +191,9 @@
   function openLB(i) { curIdx = i; lbImg.src = imgs[i]; lb.classList.add('is-open'); }
   function closeLB() { lb.classList.remove('is-open'); }
   function nav(d) { curIdx = (curIdx + d + imgs.length) % imgs.length; lbImg.src = imgs[curIdx]; }
-  gallery.querySelectorAll('button').forEach(b => b.addEventListener('click', () => openLB(+b.dataset.idx)));
+  // Bind lightbox to both the bottom gallery and the sidebar mini-gallery
+  document.querySelectorAll('[data-allidx]').forEach(b =>
+    b.addEventListener('click', () => openLB(+b.dataset.allidx)));
   document.getElementById('lb-close').addEventListener('click', closeLB);
   document.getElementById('lb-prev').addEventListener('click', () => nav(-1));
   document.getElementById('lb-next').addEventListener('click', () => nav(+1));
