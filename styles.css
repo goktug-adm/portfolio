@@ -142,6 +142,37 @@ a:hover { color: var(--link-hover); text-decoration: underline; text-underline-o
 .nameplate__contact span { color: var(--muted); margin-right: 8px; }
 .nameplate__contact a { color: var(--text-2); }
 
+/* Two-column nameplate with portrait photo on the right */
+.nameplate--with-photo {
+  display: grid;
+  grid-template-columns: 1fr 180px;
+  gap: 28px;
+  align-items: center;
+}
+.nameplate__main { min-width: 0; }
+.nameplate__photo {
+  width: 180px; height: 180px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--bg);
+  border: 1px solid var(--rule);
+}
+.nameplate__photo img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  display: block;
+}
+@media (max-width: 700px) {
+  .nameplate--with-photo {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .nameplate__photo {
+    width: 140px; height: 140px;
+    margin: 0 auto;
+  }
+}
+
 /* =====================================================================
  *  Section heading block (§ 01 + title + intro)
  * ===================================================================== */
@@ -397,11 +428,13 @@ h2.section-title { font-size: 32px; }
 }
 .cat-card__previews {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr);  /* default */
   gap: 2px;
   background: var(--rule);
   height: 140px;
 }
+.cat-card__previews[data-count="1"] { grid-template-columns: 1fr; }
+.cat-card__previews[data-count="2"] { grid-template-columns: 1fr 1fr; }
 .cat-card__previews img {
   width: 100%; height: 100%;
   object-fit: cover;

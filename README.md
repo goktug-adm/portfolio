@@ -136,5 +136,5 @@ the index is generated from the file system).
 
 ## Contact
 
-[goktugardagok0987@gmail.com](mailto:goktugardagok0987@gmail.com) · Sabancı
+[goktug.gok@sabanciuniv.edu](mailto:goktug.gok@sabanciuniv.edu) · Sabancı
 University, Mechatronics Engineering

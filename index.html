@@ -22,17 +22,21 @@
       <p class="date-line" id="dateLine"></p>
 
       <!-- Name plate -->
-      <section class="nameplate">
-        <div class="nameplate__head">
-          <h1>Göktuğ Arda Gök</h1>
-          <span class="nameplate__tag">Mechatronics · '26</span>
+      <section class="nameplate nameplate--with-photo">
+        <div class="nameplate__main">
+          <div class="nameplate__head">
+            <h1>Göktuğ Arda Gök</h1>
+            <span class="nameplate__tag">Mechatronics · '26</span>
+          </div>
+          <p class="nameplate__sub">Sabancı University — Faculty of Engineering &amp; Natural Sciences</p>
+          <hr class="nameplate__rule">
+          <div class="nameplate__contact">
+            <div><span>✦</span>Mechatronics Engineering</div>
+            <div><span>✉</span><a href="mailto:goktug.gok@sabanciuniv.edu">goktug.gok@sabanciuniv.edu</a></div>
+          </div>
         </div>
-        <p class="nameplate__sub">Sabancı University — Faculty of Engineering &amp; Natural Sciences</p>
-        <hr class="nameplate__rule">
-        <div class="nameplate__contact">
-          <div><span>✦</span>Mechatronics Engineering</div>
-          <div><span>✉</span><a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></div>
-          <div><span>☎</span>+90 532 203 71 66</div>
+        <div class="nameplate__photo">
+          <img src="assets/goktug-arda-gok.jpg" alt="Göktuğ Arda Gök" />
         </div>
       </section>
 
@@ -86,7 +90,7 @@
     <div class="container container--wide">
       <div>Sabancı University</div>
       <div class="center">Project Portfolio</div>
-      <div><a href="mailto:goktugardagok0987@gmail.com">goktugardagok0987@gmail.com</a></div>
+      <div><a href="mailto:goktug.gok@sabanciuniv.edu">goktug.gok@sabanciuniv.edu</a></div>
     </div>
   </footer>
 </div>
@@ -162,12 +166,13 @@
   catGrid.innerHTML = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key))
     .map(c => {
       const projects = window.PROJECTS.filter(p => primaryCat(p) === c.key);
-      const previews = projects.slice(0, 3)
+      const previewProjects = projects.slice(0, 3);
+      const previews = previewProjects
         .map(p => `<img src="${pickCover(p.slug)}" alt="" loading="lazy">`)
         .join('');
       return `
         <button class="cat-card" data-cat="${c.key}">
-          <div class="cat-card__previews">${previews}</div>
+          <div class="cat-card__previews" data-count="${previewProjects.length}">${previews}</div>
           <div class="cat-card__body">
             <span class="code-badge ${CAT_CLASS[c.key] || ''}">§ ${c.key.toUpperCase()}</span>
             <h3>${c.label}</h3>
