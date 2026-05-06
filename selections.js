@@ -42,18 +42,18 @@ window.SELECTIONS = {
   "me308-lab7": [
     "custom/me308-lab7/Ekran-g-r-nt-s-2026-05-06-102827-motqkzk1.png"
   ],
-  "patent-linear-track": [
-    "custom/patent-linear-track/download-motxvcab.jpg",
-    "custom/patent-linear-track/download-motxve4r.jpg",
-    "custom/patent-linear-track/download-motxvfx4.jpg",
-    "custom/patent-linear-track/download-motxvhh4.jpg",
-    "custom/patent-linear-track/download-motxviy4.jpg",
-    "custom/patent-linear-track/download-motxvqag.jpg",
-    "custom/patent-linear-track/download-motxvrza.jpg"
+  "patent-sta-slider": [
+    "custom/patent-sta-slider/download-motxvcab.jpg",
+    "custom/patent-sta-slider/download-motxve4r.jpg",
+    "custom/patent-sta-slider/download-motxvfx4.jpg",
+    "custom/patent-sta-slider/download-motxvhh4.jpg",
+    "custom/patent-sta-slider/download-motxviy4.jpg",
+    "custom/patent-sta-slider/download-motxvqag.jpg",
+    "custom/patent-sta-slider/download-motxvrza.jpg"
   ]
 };
 
 window.COVERS = {
-  "patent-linear-track": "figures/patent-linear-track/catalog-002-002.jpg",
-  "patent-profile": "images/patent-profile/page-3.jpg"
+  "patent-sep-2000":   "images/patent-sep-2000/page-2.jpg",
+  "patent-sta-slider": "custom/patent-sta-slider/download-motxvqag.jpg"
 };
