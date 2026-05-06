@@ -55,7 +55,8 @@
         <div class="kpi">
           <div><p class="label">Projects</p><p class="value" id="kpiProjects">—</p></div>
           <div><p class="label">Disciplines</p><p class="value" id="kpiDisciplines">—</p></div>
-          <div><p class="label">Patents</p><p class="value" id="kpiPatents">—</p></div>
+          <div><p class="label">Registered Designs</p><p class="value" id="kpiDesigns">—</p></div>
+          <div><p class="label">Patent (PCT)</p><p class="value">1</p></div>
           <div><p class="label">ECTS</p><p class="value">240</p></div>
         </div>
       </section>
@@ -158,7 +159,7 @@
   const presentCats = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key));
   document.getElementById('kpiProjects').textContent = window.PROJECTS.length;
   document.getElementById('kpiDisciplines').textContent = presentCats.length;
-  document.getElementById('kpiPatents').textContent =
+  document.getElementById('kpiDesigns').textContent =
     window.PROJECTS.filter(p => p.categories.includes('patents')).length;
 
   // ---- Step 1 — discipline cards ----
