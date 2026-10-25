@@ -3,7 +3,7 @@
 window.PROJECTS = [
   {
     slug: "admex-configurator",
-    title: "Parametric Product Configurator for Linear Motion Systems",
+    title: "Cadalogue: Parametric Product Configurator for Linear Motion Systems",
     course: "ADMEX Group · In development",
     contextLabel: "Context",
     date: "2026",
@@ -12,10 +12,10 @@ window.PROJECTS = [
     summary: "A web configurator where customers enter the dimensions of an ADMEX product, preview it in 3D and download a CAD model of that exact configuration. Built on STEP models exported from Siemens NX and assembled by Python geometry workers.",
     tags: ["Siemens NX", "STEP AP214", "pythonocc-core", "Next.js", "React Three Fiber", "Inngest"],
     sections: [
-      { h: "Overview", b: "<p>Customers who design a robot cell need CAD models of the linear axes they plan to buy, in the exact lengths and options they need. This configurator lets them enter those dimensions on a web page, see the product update in a 3D viewer, and download a ready-to-use CAD file. The idea is similar to online CAD catalogues used across the automation industry.</p>" },
+      { h: "Overview", b: "<p>Cadalogue is a configurator for ADMEX products. Customers who design a robot cell need CAD models of the linear axes they plan to buy, in the exact lengths and options they need. This configurator lets them enter those dimensions on a web page, see the product update in a 3D viewer, and download a ready-to-use CAD file. The idea is similar to online CAD catalogues used across the automation industry.</p>" },
       { h: "Approach", b: "<p>The core of the system is what I call a <strong>backbone-driven assembly</strong>. The engineering team exports each part from Siemens NX as a STEP AP214 file that contains <strong>named datum coordinate systems</strong>. These named frames act as a contract between CAD and software: they tell the program where each part attaches and which direction it stretches when a dimension changes.</p><p>Python workers built on pythonocc-core (Open CASCADE) read the STEP files, place and resize the parts along this backbone, and write the finished assembly back out as a STEP file.</p>" },
       { h: "Architecture", b: "<ul><li><strong>Front end:</strong> Next.js on Vercel, with a React Three Fiber viewer for the 3D preview.</li><li><strong>Geometry:</strong> Python and pythonocc-core workers running on Fly.io.</li><li><strong>Orchestration:</strong> Inngest jobs that queue and track each CAD build.</li><li><strong>Storage:</strong> Vercel Blob for model files and MongoDB Atlas for product data.</li></ul>" },
-      { h: "Example configurations", b: "<p>The images show SGP column-and-boom gantry configurations, from the compact SGP2 to the dual-column SGP15. Each one is described by a parameter code (for example <code>SGP6-X04_7-YP4_3-Z03</code>) that sets the column size and the travel of the X, Y and Z axes.</p>" },
+      { h: "Example configurations", b: "<p>The images show SGP column-and-boom gantry configurations built for Cadalogue, from the compact SGP2 to the dual-column SGP15. Each one is described by a parameter code (for example <code>SGP6-X04_7-YP4_3-Z03</code>) that sets the column size and the travel of the X, Y and Z axes.</p>" },
       { h: "Status", b: "<p>The project is in development. It is built with AI-assisted development in Claude Code, while the CAD contract and product logic come from my work with the engineering team.</p>" }
     ]
   },
@@ -40,17 +40,17 @@ window.PROJECTS = [
 
   {
     slug: "trade-fair-models",
-    title: "1:10 Scale Models for the Schweissen & Schneiden Trade Fair",
+    title: "3D-Printed 1:10 Scale Models of ADMEX Products",
     course: "ADMEX Group · Schweissen & Schneiden 2025, Essen",
     contextLabel: "Context",
     date: "September 2025",
     badge: "Industry",
     categories: ["industry", "cad"],
-    summary: "3D-printed 1:10 scale models of ADMEX robotic positioners and tracks, shown on the company's stand at Schweissen & Schneiden 2025 in Essen, the international trade fair for joining, cutting and surfacing.",
+    summary: "A range of 3D-printed 1:10 scale models of ADMEX robotic positioners and tracks, printed in several parts and colours and assembled. The models were shown on the company's stand at Schweissen & Schneiden 2025 in Essen.",
     tags: ["3D printing", "Siemens NX", "Scale models", "Trade fair"],
     sections: [
-      { h: "Overview", b: "<p>ADMEX exhibited at Schweissen &amp; Schneiden 2025 in Essen (15 to 19 September 2025, Hall 5, Stand 5H21). For the stand I prepared and 3D-printed 1:10 scale models of the company's robotic positioners and tracks, so visitors could see the whole product range side by side on the shelves.</p>" },
-      { h: "Process", b: "<p>I made print-ready versions of the product CAD models in Siemens NX and tracked the printing of the range in a production plan. The plan covered around 30 positioner models across the SPN-V, SPN-ID/IBD, SPN-L/LB and SPN-U families in several sizes, together with STL robot track models.</p>" }
+      { h: "Overview", b: "<p>ADMEX exhibited at Schweissen &amp; Schneiden 2025 in Essen (15 to 19 September 2025, Hall 5, Stand 5H21). For the stand I prepared and 3D-printed 1:10 scale models of the company's robotic positioners and tracks, so visitors could see the whole product range side by side on the shelves. A 1:10 human figure printed at the same scale shows the real size of each machine.</p>" },
+      { h: "Process", b: "<p>I made print-ready versions of the product CAD models in Siemens NX, split them into parts that print well and in separate colours, and tracked the printing of the range in a production plan. The plan covered around 30 positioner models across the SPN-V, SPN-ID/IBD, SPN-L/LB and SPN-U families in several sizes, together with STL robot track models.</p>" }
     ]
   },
   {
