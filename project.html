@@ -81,6 +81,7 @@
 
   const CATS = [
     { key: 'patents',      label: 'Patents & Registered Designs', class: 'code-badge--cad' },
+    { key: 'industry',     label: 'Industry Work',          class: 'code-badge--controls' },
     { key: 'robotics',     label: 'Robotics & Vision',      class: 'code-badge--robotics' },
     { key: 'controls',     label: 'Controls & Dynamics',    class: 'code-badge--controls' },
     { key: 'mechatronics', label: 'Mechatronics & PLC',     class: 'code-badge--mech' },
@@ -125,7 +126,7 @@
   document.getElementById('d-meta').innerHTML = meta;
 
   document.getElementById('d-actions').innerHTML = `
-    <a class="btn btn--primary" href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">↗ Open PDF report</a>
+    ${project.pdf ? `<a class="btn btn--primary" href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">↗ Open PDF report</a>` : ''}
     <a class="btn" href="index.html">All projects</a>
   `;
 
@@ -138,9 +139,10 @@
   const picked  = (window.SELECTIONS || {})[project.slug];
   const customs = ix.custom || [];
   // Sidebar mini-gallery: prefer curated picks; else fall back to uploads
-  const sideImgs = (picked && picked.length) ? picked : customs;
+  const sideImgs = (picked && picked.length) ? picked : (((ix.pages && ix.pages.length) || (ix.figures && ix.figures.length)) ? customs : []);
   // Bottom gallery: always the full report (every PDF page)
-  const reportImgs = (ix.pages && ix.pages.length) ? ix.pages : (ix.figures || []);
+  const hasReport = !!((ix.pages && ix.pages.length) || (ix.figures && ix.figures.length));
+  const reportImgs = (ix.pages && ix.pages.length) ? ix.pages : ((ix.figures && ix.figures.length) ? ix.figures : customs);
 
   // Combined list for the lightbox so prev/next walks all of them
   const allImgs = [];
@@ -161,24 +163,25 @@
   ` : '';
 
   document.getElementById('d-sidebar').innerHTML = `
-    <h3>Course</h3><p>${project.course}</p>
+    <h3>${project.contextLabel || 'Course'}</h3><p>${project.course}</p>
     <h3>Date</h3><p>${project.date}</p>
     ${project.collaborators ? `<h3>With</h3><p>${project.collaborators}</p>` : ''}
     ${project.supervisor    ? `<h3>Supervisor</h3><p>${project.supervisor}</p>` : ''}
     <h3>Tools &amp; topics</h3>
     <ul class="tags">${project.tags.map(t => `<li>${t}</li>`).join('')}</ul>
-    <h3 style="margin-top: 22px">Source</h3>
-    <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
+    ${project.pdf ? `<h3 style="margin-top: 22px">Source</h3>
+    <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>` : ''}
     ${miniHtml}
   `;
 
   // Bottom gallery — full report
   const gallery = document.getElementById('d-gallery');
   const galleryHeading = document.querySelector('.gallery-section h2');
-  if (galleryHeading) galleryHeading.textContent = sideImgs.length ? 'Pages from the report' : 'From the report';
+  if (galleryHeading) galleryHeading.textContent = !hasReport ? 'Images' : (sideImgs.length ? 'Pages from the report' : 'From the report');
   if (!reportImgs.length) {
     gallery.parentElement.style.display = 'none';
   }
+  if (!hasReport) gallery.classList.add('gallery--photos');
   gallery.innerHTML = reportImgs.map((src, i) => `
     <button data-allidx="${allImgs.indexOf(src)}" aria-label="Open page ${i + 1}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
   `).join('');

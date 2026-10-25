@@ -2,6 +2,58 @@
 // Sections render as { h: "Heading", b: "<paragraph(s) HTML>" }.
 window.PROJECTS = [
   {
+    slug: "admex-configurator",
+    title: "Parametric Product Configurator for Linear Motion Systems",
+    course: "ADMEX Group · In development",
+    contextLabel: "Context",
+    date: "2026",
+    badge: "Industry",
+    categories: ["industry", "cad"],
+    summary: "A web configurator where customers enter the dimensions of an ADMEX product, preview it in 3D and download a CAD model of that exact configuration. Built on STEP models exported from Siemens NX and assembled by Python geometry workers.",
+    tags: ["Siemens NX", "STEP AP214", "pythonocc-core", "Next.js", "React Three Fiber", "Inngest"],
+    sections: [
+      { h: "Overview", b: "<p>Customers who design a robot cell need CAD models of the linear axes they plan to buy, in the exact lengths and options they need. This configurator lets them enter those dimensions on a web page, see the product update in a 3D viewer, and download a ready-to-use CAD file. The idea is similar to online CAD catalogues used across the automation industry.</p>" },
+      { h: "Approach", b: "<p>The core of the system is what I call a <strong>backbone-driven assembly</strong>. The engineering team exports each part from Siemens NX as a STEP AP214 file that contains <strong>named datum coordinate systems</strong>. These named frames act as a contract between CAD and software: they tell the program where each part attaches and which direction it stretches when a dimension changes.</p><p>Python workers built on pythonocc-core (Open CASCADE) read the STEP files, place and resize the parts along this backbone, and write the finished assembly back out as a STEP file.</p>" },
+      { h: "Architecture", b: "<ul><li><strong>Front end:</strong> Next.js on Vercel, with a React Three Fiber viewer for the 3D preview.</li><li><strong>Geometry:</strong> Python and pythonocc-core workers running on Fly.io.</li><li><strong>Orchestration:</strong> Inngest jobs that queue and track each CAD build.</li><li><strong>Storage:</strong> Vercel Blob for model files and MongoDB Atlas for product data.</li></ul>" },
+      { h: "Example configurations", b: "<p>The images show SGP column-and-boom gantry configurations, from the compact SGP2 to the dual-column SGP15. Each one is described by a parameter code (for example <code>SGP6-X04_7-YP4_3-Z03</code>) that sets the column size and the travel of the X, Y and Z axes.</p>" },
+      { h: "Status", b: "<p>The project is in development. It is built with AI-assisted development in Claude Code, while the CAD contract and product logic come from my work with the engineering team.</p>" }
+    ]
+  },
+
+  {
+    slug: "admex-web",
+    title: "ADMEX Web: Pricing and Configuration Platform",
+    course: "ADMEX Group · Internal tool",
+    contextLabel: "Context",
+    date: "2026",
+    badge: "Industry",
+    categories: ["industry"],
+    summary: "A web platform the ADMEX sales team uses to price and configure the company's positioner, track and gantry product lines. Built with Next.js, MongoDB and Clerk authentication, deployed on Vercel.",
+    tags: ["Next.js", "TypeScript", "MongoDB", "Clerk", "Vercel", "Claude Code"],
+    sections: [
+      { h: "Overview", b: "<p>ADMEX Web is an internal web platform for pricing and configuring ADMEX products. The sales team starts from one of three product families (positioners with 17 types, robot tracks with 5 series and gantry systems with 5 types), sets the parameters and options of a product, and sees the resulting configuration and price in one place.</p>" },
+      { h: "What it does", b: "<ul><li><strong>Parameter selection:</strong> each product type has its own parameters, such as maximum work piece weight, turning diameter, part length and tilt axis height for a positioner.</li><li><strong>Technical drawing:</strong> the dimensioned drawing of the selected product is shown next to the parameters.</li><li><strong>Options:</strong> add-ons such as a tailstock or a cable pass hole, with reference images.</li><li><strong>Sales workflow:</strong> saved presets, offers, a cart, customer records and an admin mode.</li></ul>" },
+      { h: "How it is built", b: "<ul><li><strong>Application:</strong> Next.js and TypeScript, deployed on Vercel.</li><li><strong>Data:</strong> product and price data stored in MongoDB.</li><li><strong>Access:</strong> Clerk authentication with restricted sign-up, so only invited company users can log in.</li></ul>" },
+      { h: "My role", b: "<p>I built and maintain the platform using AI-assisted development with Claude Code. My work is on the product side: structuring the product and price data, deciding how configurations should behave, and testing the tool with the people who use it.</p>" }
+    ]
+  },
+
+  {
+    slug: "trade-fair-models",
+    title: "1:10 Scale Models for the Schweissen & Schneiden Trade Fair",
+    course: "ADMEX Group · Schweissen & Schneiden 2025, Essen",
+    contextLabel: "Context",
+    date: "September 2025",
+    badge: "Industry",
+    categories: ["industry", "cad"],
+    summary: "3D-printed 1:10 scale models of ADMEX robotic positioners and tracks, shown on the company's stand at Schweissen & Schneiden 2025 in Essen, the international trade fair for joining, cutting and surfacing.",
+    tags: ["3D printing", "Siemens NX", "Scale models", "Trade fair"],
+    sections: [
+      { h: "Overview", b: "<p>ADMEX exhibited at Schweissen &amp; Schneiden 2025 in Essen (15 to 19 September 2025, Hall 5, Stand 5H21). For the stand I prepared and 3D-printed 1:10 scale models of the company's robotic positioners and tracks, so visitors could see the whole product range side by side on the shelves.</p>" },
+      { h: "Process", b: "<p>I made print-ready versions of the product CAD models in Siemens NX and tracked the printing of the range in a production plan. The plan covered around 30 positioner models across the SPN-V, SPN-ID/IBD, SPN-L/LB and SPN-U families in several sizes, together with STL robot track models.</p>" }
+    ]
+  },
+  {
     slug: "spherical-graduation",
     title: "Analysis, Implementation & Control of a Parallel Spherical Manipulator",
     course: "ENS 491-492 · Graduation Project",
