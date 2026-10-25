@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Göktuğ Arda Gök — Project Portfolio</title>
+  <meta name="description" content="Portfolio of Göktuğ Arda Gök, mechatronics engineer at ADMEX Group. Selected projects in robotics, control, industrial automation, machine learning and CAD." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+
+  <header class="runhead">
+    <div class="container container--wide">
+      <div class="left"><strong>Göktuğ Arda Gök</strong><span>Portfolio</span></div>
+      <div class="right">Mechatronics Engineer</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container container--wide">
+      <p class="date-line" id="dateLine"></p>
+
+      <!-- Name plate -->
+      <section class="nameplate nameplate--with-photo">
+        <div class="nameplate__main">
+          <div class="nameplate__head">
+            <h1>Göktuğ Arda Gök</h1>
+            <span class="nameplate__tag">Mechatronics Engineer</span>
+          </div>
+          <p class="nameplate__sub">Software and Mechatronics Engineer at ADMEX Group (Swedish branch). B.Sc. Mechatronics Engineering, Sabancı University.</p>
+          <hr class="nameplate__rule">
+          <div class="nameplate__contact">
+            <div><span>Email</span><a href="mailto:goktug@admex.com.tr">goktug@admex.com.tr</a></div>
+            <div><span>CV</span><a href="pdfs/GoktugArdaGok_CV.pdf" target="_blank" rel="noopener">Download (PDF)</a></div>
+            <div><span>Based in</span>Istanbul, Turkey</div>
+          </div>
+        </div>
+        <div class="nameplate__photo">
+          <img src="assets/goktug-arda-gok.jpg" alt="Göktuğ Arda Gök" />
+        </div>
+      </section>
+
+      <!-- Cover intro -->
+      <section>
+        <h1 class="section-title">About</h1>
+        <p>
+          I work on industrial motion systems at ADMEX Group, a company that
+          builds robotic positioners, tracks and gantries, together with our
+          team in Sweden. Before that I studied Mechatronics Engineering at
+          Sabancı University. This page collects my work experience, my
+          registered designs and selected projects from my studies and
+          internships.
+        </p>
+
+        <div class="kpi">
+          <div><p class="label">Projects</p><p class="value" id="kpiProjects">—</p></div>
+          <div><p class="label">Disciplines</p><p class="value" id="kpiDisciplines">—</p></div>
+          <div><p class="label">Registered Designs</p><p class="value" id="kpiDesigns">—</p></div>
+          <div><p class="label">Patent (PCT)</p><p class="value">1</p></div>
+          <div><p class="label">ECTS</p><p class="value">240</p></div>
+        </div>
+      </section>
+
+      <div id="home-top">
+      <!-- Experience -->
+      <section class="title-block">
+        <p class="section-mark">§ 01</p>
+        <h2 class="section-title">Experience</h2>
+        <hr class="section-rule">
+        <ol class="xp">
+          <li>
+            <div class="xp__when">Jan 2026 to present</div>
+            <div class="xp__what">
+              <h3>Software and Mechatronics Engineer, ADMEX Group (Swedish branch)</h3>
+              <p class="xp__where">Istanbul, Turkey, working with the team in Sweden</p>
+              <ul>
+                <li>Gantry drive and control systems: servo motor and cycloidal gearbox selection, encoder specifications, control panel architecture and explosion-proof motor variants with SEW-Eurodrive.</li>
+                <li>Part and assembly modelling in Siemens NX for positioner and gantry components.</li>
+                <li>A parametric product configurator where customers enter dimensions, preview the product in 3D and download CAD models.</li>
+                <li>ADMEX Web, a pricing and configuration platform for the sales team, built with AI-assisted development (Claude Code).</li>
+              </ul>
+            </div>
+          </li>
+          <li>
+            <div class="xp__when">Jun to Aug 2025</div>
+            <div class="xp__what">
+              <h3>Engineering Intern, Altınay Defence</h3>
+              <p>Swarm drone simulation in MATLAB and ROS 2. <a href="project.html?slug=drone-swarm">See the project</a></p>
+            </div>
+          </li>
+          <li>
+            <div class="xp__when">Jul to Aug 2024</div>
+            <div class="xp__what">
+              <h3>Intern, FANUC Turkey</h3>
+              <p>Industrial robot programming, CNC maintenance and Roboguide simulation.</p>
+            </div>
+          </li>
+          <li>
+            <div class="xp__when">Jul 2023</div>
+            <div class="xp__what">
+              <h3>Intern, ADMEX Advanced Motion Experts</h3>
+            </div>
+          </li>
+          <li>
+            <div class="xp__when">2021 to 2026</div>
+            <div class="xp__what">
+              <h3>B.Sc. Mechatronics Engineering, Sabancı University</h3>
+              <p>Taught in English, 240 ECTS. Graduation project on a parallel spherical manipulator with vision-based orientation tracking.</p>
+            </div>
+          </li>
+        </ol>
+      </section>
+
+      <!-- Featured -->
+      <section class="title-block">
+        <p class="section-mark">§ 02</p>
+        <h2 class="section-title">Featured work</h2>
+        <hr class="section-rule">
+        <div class="proj-grid" id="featGrid"></div>
+      </section>
+      </div>
+
+      <!-- Step 1: Discipline picker -->
+      <section id="step-disciplines" class="title-block">
+        <p class="section-mark">§ 03</p>
+        <h2 class="section-title">All projects by discipline</h2>
+        <hr class="section-rule">
+        <p class="section-intro">
+          Projects are grouped by the methods and tools they share. Click a
+          discipline to see its projects.
+        </p>
+        <div class="cat-grid" id="catGrid"></div>
+      </section>
+
+      <!-- Step 2: Project cards (revealed after a discipline is chosen) -->
+      <section id="step-projects" class="title-block" hidden>
+        <p>
+          <a class="cat-back" href="#" id="backToCats">← All disciplines</a>
+        </p>
+        <p class="section-mark" id="catSecMark">§ 02</p>
+        <h2 class="section-title" id="catTitle"></h2>
+        <hr class="section-rule">
+        <p class="section-intro" id="catIntro"></p>
+        <div class="proj-grid" id="projGrid"></div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="runfoot">
+    <div class="container container--wide">
+      <div>Göktuğ Arda Gök</div>
+      <div class="center">Portfolio</div>
+      <div><a href="mailto:goktug@admex.com.tr">goktug@admex.com.tr</a></div>
+    </div>
+  </footer>
+</div>
+
+<script src="projects.js"></script>
+<script src="image-index.js"></script>
+<script src="selections.js"></script>
+<script>
+  // Date line
+  const d = new Date();
+  document.getElementById('dateLine').textContent =
+    String(d.getDate()).padStart(2, '0') + '.' +
+    String(d.getMonth() + 1).padStart(2, '0') + '.' +
+    d.getFullYear();
+
+  const CATS = [
+    { key: 'patents',      label: 'Patents & Registered Designs',
+      intro: "Industrial designs registered in my name with the Turkish Patent and Trademark Office, one extended through a PCT filing." },
+    { key: 'robotics',     label: 'Robotics & Vision',
+      intro: "Mobile and aerial robotics, computer-vision sensing, and the kinematics of a parallel spherical manipulator." },
+    { key: 'controls',     label: 'Controls & Dynamics',
+      intro: "Closed-loop control work: current loops, cascaded controllers, motor position control and quadrotor dynamics." },
+    { key: 'mechatronics', label: 'Mechatronics & PLC',
+      intro: "Industrial mechatronics labs on Beckhoff PLCs and TwinCAT, covering sequential control, PID temperature loops, and servo motion." },
+    { key: 'ml',           label: 'Machine Learning',
+      intro: "Coursework in classical and deep machine learning: sentiment classification baselines and a transfer-learning image classifier." },
+    { key: 'cad',          label: 'CAD & Manufacturing',
+      intro: "CAD assemblies and a manufacturing-process study, working through real-world materials, tolerances, and tooling." },
+    { key: 'other',        label: 'Other',
+      intro: "Work outside the engineering categories above: entrepreneurship and applied AI." }
+  ];
+  const CAT_CLASS = {
+    patents: 'code-badge--cad',
+    robotics: 'code-badge--robotics',
+    controls: 'code-badge--controls',
+    mechatronics: 'code-badge--mech',
+    ml: 'code-badge--ml',
+    cad: 'code-badge--cad',
+    other: 'code-badge--other'
+  };
+
+  function primaryCat(p) {
+    for (const c of CATS) if (p.categories.includes(c.key)) return c.key;
+    return 'other';
+  }
+  function shortCode(course) {
+    const m = course.match(/^([A-Z]{2,4}\s?\d{3,4}(?:-\d{3,4})?[A-Z]?)/);
+    return m ? m[1] : course.split(/[·•|]/)[0].trim();
+  }
+  function pickCover(slug) {
+    const cov = (window.COVERS || {})[slug];
+    if (cov) return cov;
+    const sel = (window.SELECTIONS || {})[slug];
+    if (sel && sel.length) return sel[0];
+    const idx = (window.IMAGE_INDEX || []).find(p => p.slug === slug);
+    if (idx) {
+      if ((idx.custom || []).length)  return idx.custom[0];
+      if ((idx.figures || []).length) return idx.figures[0];
+      if ((idx.pages || []).length)   return idx.pages[0];
+    }
+    return '';
+  }
+
+  // ---- KPI strip values from data ----
+  const presentCats = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key));
+  document.getElementById('kpiProjects').textContent = window.PROJECTS.length;
+  document.getElementById('kpiDisciplines').textContent = presentCats.length;
+  document.getElementById('kpiDesigns').textContent =
+    window.PROJECTS.filter(p => p.categories.includes('patents')).length;
+
+  // ---- Step 1 — discipline cards ----
+  const catGrid = document.getElementById('catGrid');
+  catGrid.innerHTML = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key))
+    .map(c => {
+      const projects = window.PROJECTS.filter(p => primaryCat(p) === c.key);
+      const previewProjects = projects.slice(0, 3);
+      const previews = previewProjects
+        .map(p => `<img src="${pickCover(p.slug)}" alt="" loading="lazy">`)
+        .join('');
+      return `
+        <button class="cat-card" data-cat="${c.key}">
+          <div class="cat-card__previews" data-count="${previewProjects.length}">${previews}</div>
+          <div class="cat-card__body">
+            <span class="code-badge ${CAT_CLASS[c.key] || ''}">§ ${c.key.toUpperCase()}</span>
+            <h3>${c.label}</h3>
+            <p>${c.intro}</p>
+            <p class="cat-card__count">${projects.length} project${projects.length === 1 ? '' : 's'} →</p>
+          </div>
+        </button>`;
+    }).join('');
+
+  // ---- Featured work ----
+  const FEATURED = ['spherical-graduation', 'patent-sta-slider', 'drone-swarm'];
+  function card(p, catKey) {
+    return `
+      <a class="proj-card" href="project.html?slug=${encodeURIComponent(p.slug)}">
+        <div class="proj-card__cover">
+          <img src="${pickCover(p.slug)}" alt="" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <div class="proj-card__head">
+            <span class="code-badge ${CAT_CLASS[catKey] || ''}">${shortCode(p.course)}</span>
+            <span class="proj-card__date">${p.date}</span>
+          </div>
+          <h3>${p.title}</h3>
+          <p>${p.summary}</p>
+          <ul class="tags">${p.tags.slice(0, 4).map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+      </a>`;
+  }
+  document.getElementById('featGrid').innerHTML = FEATURED
+    .map(s => window.PROJECTS.find(p => p.slug === s)).filter(Boolean)
+    .map(p => card(p, primaryCat(p))).join('');
+  const homeTop = document.getElementById('home-top');
+
+  // ---- Step 2 — project cards (built per category on click) ----
+  const stepDisc  = document.getElementById('step-disciplines');
+  const stepProj  = document.getElementById('step-projects');
+  const projGrid  = document.getElementById('projGrid');
+
+  function showCategory(catKey) {
+    const cat = CATS.find(c => c.key === catKey);
+    if (!cat) return;
+    const projects = window.PROJECTS.filter(p => primaryCat(p) === catKey);
+    document.getElementById('catTitle').textContent = cat.label;
+    document.getElementById('catIntro').textContent = cat.intro;
+    const order = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p) === c.key));
+    document.getElementById('catSecMark').textContent =
+      '§ ' + String(order.findIndex(c => c.key === catKey) + 4).padStart(2, '0');
+
+    projGrid.innerHTML = projects.map(p => `
+      <a class="proj-card" href="project.html?slug=${encodeURIComponent(p.slug)}">
+        <div class="proj-card__cover">
+          <img src="${pickCover(p.slug)}" alt="" loading="lazy">
+        </div>
+        <div class="proj-card__body">
+          <div class="proj-card__head">
+            <span class="code-badge ${CAT_CLASS[catKey] || ''}">${shortCode(p.course)}</span>
+            <span class="proj-card__date">${p.date}</span>
+          </div>
+          <h3>${p.title}</h3>
+          <p>${p.summary}</p>
+          <ul class="tags">${p.tags.slice(0, 4).map(t => `<li>${t}</li>`).join('')}</ul>
+        </div>
+      </a>
+    `).join('');
+
+    stepDisc.hidden = true;
+    homeTop.hidden = true;
+    stepProj.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', '#' + catKey);
+  }
+
+  function showDisciplines() {
+    stepProj.hidden = true;
+    stepDisc.hidden = false;
+    homeTop.hidden = false;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    history.replaceState(null, '', location.pathname);
+  }
+
+  catGrid.querySelectorAll('.cat-card').forEach(btn =>
+    btn.addEventListener('click', () => showCategory(btn.dataset.cat)));
+  document.getElementById('backToCats').addEventListener('click', e => {
+    e.preventDefault(); showDisciplines();
+  });
+
+  // Deep-link (e.g. .../#robotics)
+  if (location.hash) {
+    const k = location.hash.replace('#', '');
+    if (CATS.find(c => c.key === k)) showCategory(k);
+  }
+</script>
+</body>
+</html>

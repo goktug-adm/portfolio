@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Project — Göktuğ Arda Gök</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+
+  <header class="runhead">
+    <div class="container">
+      <div class="left"><strong>Göktuğ Arda Gök</strong><span id="hd-sub">Project Portfolio</span></div>
+      <div class="right">Mechatronics Engineer</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+      <p class="date-line">
+        <a href="index.html" style="color: var(--muted)">← Portfolio</a>
+      </p>
+
+      <div class="title-block" style="margin-top: 36px">
+        <p class="section-mark" id="d-sectionmark">§ 0X</p>
+        <p style="font-family: var(--sans); font-size: 13px; color: var(--muted); letter-spacing: .04em; margin: 0 0 18px">
+          <span id="d-cat"></span>
+        </p>
+
+        <div style="display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; margin-bottom: 8px">
+          <span class="code-badge" id="d-code"></span>
+          <h1 class="section-title" id="d-title" style="margin: 0; font-size: 36px"></h1>
+        </div>
+
+        <ul class="detail-meta" id="d-meta"></ul>
+        <hr class="section-rule" style="margin-top: 12px">
+
+        <div class="detail-actions" id="d-actions"></div>
+      </div>
+
+      <div class="detail-grid">
+        <article class="prose" id="d-prose"></article>
+        <aside class="sidebar" id="d-sidebar"></aside>
+      </div>
+
+      <section class="gallery-section">
+        <h2>Figures from the report</h2>
+        <div class="gallery" id="d-gallery"></div>
+      </section>
+
+      <nav class="next-prev" id="d-nav"></nav>
+    </div>
+  </main>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true">
+    <button class="nav prev" id="lb-prev" aria-label="Previous">‹</button>
+    <img id="lb-img" alt="" />
+    <button class="nav next" id="lb-next" aria-label="Next">›</button>
+    <button id="lb-close" aria-label="Close">×</button>
+  </div>
+
+  <footer class="runfoot">
+    <div class="container">
+      <div>Göktuğ Arda Gök</div>
+      <div class="center" id="footPos"></div>
+      <div><a href="mailto:goktug@admex.com.tr">goktug@admex.com.tr</a></div>
+    </div>
+  </footer>
+</div>
+
+<script src="projects.js"></script>
+<script src="image-index.js"></script>
+<script src="selections.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const slug = params.get('slug');
+  const project = window.PROJECTS.find(p => p.slug === slug) || window.PROJECTS[0];
+  const idx = window.PROJECTS.indexOf(project);
+
+  const CATS = [
+    { key: 'patents',      label: 'Patents & Registered Designs', class: 'code-badge--cad' },
+    { key: 'robotics',     label: 'Robotics & Vision',      class: 'code-badge--robotics' },
+    { key: 'controls',     label: 'Controls & Dynamics',    class: 'code-badge--controls' },
+    { key: 'mechatronics', label: 'Mechatronics & PLC',     class: 'code-badge--mech' },
+    { key: 'ml',           label: 'Machine Learning',       class: 'code-badge--ml' },
+    { key: 'cad',          label: 'CAD & Manufacturing',    class: 'code-badge--cad' },
+    { key: 'other',        label: 'Other',                  class: 'code-badge--other' }
+  ];
+  function primaryCat(p) {
+    for (const c of CATS) if (p.categories.includes(c.key)) return c;
+    return CATS[CATS.length - 1];
+  }
+  function shortCode(course) {
+    const m = course.match(/^([A-Z]{2,4}\s?\d{3,4}(?:-\d{3,4})?[A-Z]?)/);
+    return m ? m[1] : course.split(/[·•|]/)[0].trim();
+  }
+
+  const cat = primaryCat(project);
+
+  // Section number — order categories the same way as on index
+  const presentCats = CATS.filter(c => window.PROJECTS.some(p => primaryCat(p).key === c.key));
+  const sectionNum = String(presentCats.findIndex(c => c.key === cat.key) + 4).padStart(2, '0');
+
+  // Document title and header
+  document.title = `${project.title} — Göktuğ Arda Gök`;
+  document.getElementById('hd-sub').textContent = project.title.length > 60 ? project.title.slice(0, 58) + '…' : project.title;
+
+  document.getElementById('d-sectionmark').textContent = '§ ' + sectionNum;
+  document.getElementById('d-cat').textContent = cat.label;
+
+  const codeBadge = document.getElementById('d-code');
+  codeBadge.className = 'code-badge ' + cat.class;
+  codeBadge.textContent = shortCode(project.course);
+
+  document.getElementById('d-title').textContent = project.title;
+
+  const meta = [
+    project.date,
+    project.course.replace(/^[A-Z]{2,4}\s?\d{3,4}(?:-\d{3,4})?[A-Z]?\s*[·•|]?\s*/, '') || project.course,
+    project.collaborators ? 'with ' + project.collaborators : null,
+    project.supervisor    ? 'Supervisor: ' + project.supervisor : null
+  ].filter(Boolean).map(x => `<li>${x}</li>`).join('');
+  document.getElementById('d-meta').innerHTML = meta;
+
+  document.getElementById('d-actions').innerHTML = `
+    <a class="btn btn--primary" href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">↗ Open PDF report</a>
+    <a class="btn" href="index.html">All projects</a>
+  `;
+
+  document.getElementById('d-prose').innerHTML = project.sections
+    .map(s => `<h2>${s.h}</h2>${s.b}`).join('');
+
+  // Image sources for this project
+  const ix = (window.IMAGE_INDEX || []).find(p => p.slug === project.slug)
+           || { figures: [], pages: [], custom: [] };
+  const picked  = (window.SELECTIONS || {})[project.slug];
+  const customs = ix.custom || [];
+  // Sidebar mini-gallery: prefer curated picks; else fall back to uploads
+  const sideImgs = (picked && picked.length) ? picked : customs;
+  // Bottom gallery: always the full report (every PDF page)
+  const reportImgs = (ix.pages && ix.pages.length) ? ix.pages : (ix.figures || []);
+
+  // Combined list for the lightbox so prev/next walks all of them
+  const allImgs = [];
+  const seen = new Set();
+  for (const src of [...sideImgs, ...reportImgs]) {
+    if (!seen.has(src)) { seen.add(src); allImgs.push(src); }
+  }
+
+  // Sidebar mini-gallery markup
+  const miniHtml = sideImgs.length ? `
+    <h3>Selected figures</h3>
+    <div class="mini-gallery">
+      ${sideImgs.map((src, i) => `
+        <button class="mini-tile" data-allidx="${allImgs.indexOf(src)}" aria-label="Open figure ${i + 1}">
+          <img src="${src}" alt="" loading="lazy">
+        </button>`).join('')}
+    </div>
+  ` : '';
+
+  document.getElementById('d-sidebar').innerHTML = `
+    <h3>Course</h3><p>${project.course}</p>
+    <h3>Date</h3><p>${project.date}</p>
+    ${project.collaborators ? `<h3>With</h3><p>${project.collaborators}</p>` : ''}
+    ${project.supervisor    ? `<h3>Supervisor</h3><p>${project.supervisor}</p>` : ''}
+    <h3>Tools &amp; topics</h3>
+    <ul class="tags">${project.tags.map(t => `<li>${t}</li>`).join('')}</ul>
+    <h3 style="margin-top: 22px">Source</h3>
+    <p><a href="${encodeURI(project.pdf)}" target="_blank" rel="noopener">Original PDF →</a></p>
+    ${miniHtml}
+  `;
+
+  // Bottom gallery — full report
+  const gallery = document.getElementById('d-gallery');
+  const galleryHeading = document.querySelector('.gallery-section h2');
+  if (galleryHeading) galleryHeading.textContent = sideImgs.length ? 'Pages from the report' : 'From the report';
+  if (!reportImgs.length) {
+    gallery.parentElement.style.display = 'none';
+  }
+  gallery.innerHTML = reportImgs.map((src, i) => `
+    <button data-allidx="${allImgs.indexOf(src)}" aria-label="Open page ${i + 1}"><img src="${src}" alt="Page ${i + 1}" loading="lazy"></button>
+  `).join('');
+
+  // Use the combined list for the lightbox so prev/next walks figures + pages
+  const imgs = allImgs;
+
+  // Lightbox
+  const lb = document.getElementById('lightbox');
+  const lbImg = document.getElementById('lb-img');
+  let curIdx = 0;
+  function openLB(i) { curIdx = i; lbImg.src = imgs[i]; lb.classList.add('is-open'); }
+  function closeLB() { lb.classList.remove('is-open'); }
+  function nav(d) { curIdx = (curIdx + d + imgs.length) % imgs.length; lbImg.src = imgs[curIdx]; }
+  // Bind lightbox to both the bottom gallery and the sidebar mini-gallery
+  document.querySelectorAll('[data-allidx]').forEach(b =>
+    b.addEventListener('click', () => openLB(+b.dataset.allidx)));
+  document.getElementById('lb-close').addEventListener('click', closeLB);
+  document.getElementById('lb-prev').addEventListener('click', () => nav(-1));
+  document.getElementById('lb-next').addEventListener('click', () => nav(+1));
+  lb.addEventListener('click', e => { if (e.target === lb) closeLB(); });
+  document.addEventListener('keydown', e => {
+    if (!lb.classList.contains('is-open')) return;
+    if (e.key === 'Escape') closeLB();
+    if (e.key === 'ArrowLeft') nav(-1);
+    if (e.key === 'ArrowRight') nav(+1);
+  });
+
+  // Prev/next within the same discipline (or wrap globally)
+  const prev = window.PROJECTS[(idx - 1 + window.PROJECTS.length) % window.PROJECTS.length];
+  const next = window.PROJECTS[(idx + 1) % window.PROJECTS.length];
+  document.getElementById('d-nav').innerHTML = `
+    <a href="project.html?slug=${encodeURIComponent(prev.slug)}">
+      <p class="label">← Previous</p>
+      <p class="ttl">${prev.title}</p>
+    </a>
+    <a class="next" href="project.html?slug=${encodeURIComponent(next.slug)}">
+      <p class="label">Next →</p>
+      <p class="ttl">${next.title}</p>
+    </a>
+  `;
+
+  document.getElementById('footPos').textContent = `${idx + 1} / ${window.PROJECTS.length}`;
+</script>
+</body>
+</html>

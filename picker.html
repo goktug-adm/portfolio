@@ -1,0 +1,532 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Image Picker — Portfolio</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+<div class="page">
+
+  <header class="runhead">
+    <div class="container container--wide">
+      <div class="left"><strong>Göktuğ Arda Gök</strong><span>Project Portfolio</span></div>
+      <div class="right">Editing Tool · Picker</div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container container--wide">
+      <div class="title-block" style="margin-top: 36px">
+        <p class="section-mark">§ Editor</p>
+        <h1 class="section-title">Image Picker</h1>
+        <hr class="section-rule">
+        <p class="section-intro">
+          Drag &amp; drop your photos onto any project, tick the ones you want shown,
+          and the picker pushes everything to GitHub for you. Site auto-rebuilds in
+          30–60 seconds.
+        </p>
+      </div>
+    </div>
+
+    <div class="picker-toolbar">
+      <div class="container container--wide">
+        <button class="btn btn--primary" id="save">⬆ Push selections</button>
+        <button class="btn" id="dl">⬇ Download selections.js</button>
+        <button class="btn" id="copy">📋 Copy</button>
+        <button class="btn" id="loadCurrent">↻ Reload</button>
+        <button class="btn" id="clearAll">✕ Clear all</button>
+        <span class="picker-stats" id="stats">0 selected across 0 projects</span>
+        <button class="settings-btn" id="settingsBtn" title="GitHub settings">⚙</button>
+      </div>
+    </div>
+
+    <div class="container container--wide">
+      <nav class="picker-jump" id="jump"></nav>
+      <div id="sections"></div>
+    </div>
+  </main>
+
+  <footer class="runfoot">
+    <div class="container container--wide">
+      <div>Sabancı University</div>
+      <div class="center">Project Portfolio · Picker</div>
+      <div><a href="index.html">← Back to portfolio</a></div>
+    </div>
+  </footer>
+</div>
+
+<!-- Settings drawer -->
+<div class="scrim" id="scrim"></div>
+<aside class="settings-drawer" id="drawer">
+  <button class="close" id="drawerClose">×</button>
+  <h2>GitHub upload</h2>
+  <p>
+    Direct upload pushes new images straight to the repo via GitHub's API.
+    You need a <strong>Personal Access Token</strong> with the
+    <code>public_repo</code> scope.
+    <br><br>
+    <a href="https://github.com/settings/tokens/new?scopes=public_repo&description=Portfolio%20picker" target="_blank">Create one →</a>
+    The token is stored only in your browser's <code>localStorage</code>.
+  </p>
+  <label>Owner</label>
+  <input id="cfgOwner" placeholder="goktug-adm" value="goktug-adm" />
+  <label>Repo</label>
+  <input id="cfgRepo" placeholder="portfolio" value="portfolio" />
+  <label>Branch</label>
+  <input id="cfgBranch" placeholder="main" value="main" />
+  <label>Token (kept in browser)</label>
+  <input id="cfgToken" type="password" placeholder="ghp_…" autocomplete="off" />
+  <div class="actions">
+    <button class="btn btn--primary" id="cfgSave">Save</button>
+    <button class="btn" id="cfgForget">Forget token</button>
+    <button class="btn" id="cfgTest">Test connection</button>
+  </div>
+  <p style="margin-top:18px;font-size:12px">
+    Without a token you can still pick + download <code>selections.js</code>
+    manually and commit yourself.
+  </p>
+</aside>
+
+<div class="toast-stack" id="toasts"></div>
+
+<script src="projects.js"></script>
+<script src="image-index.js"></script>
+<script src="selections.js"></script>
+<script>
+  /* ===== State ===== */
+  const state = {};
+  const covers = {};                        // { slug: path }
+  const localIndex = JSON.parse(JSON.stringify(window.IMAGE_INDEX || []));
+  const cfg = {
+    owner:  localStorage.getItem('gh_owner')  || 'goktug-adm',
+    repo:   localStorage.getItem('gh_repo')   || 'portfolio',
+    branch: localStorage.getItem('gh_branch') || 'main',
+    token:  localStorage.getItem('gh_token')  || ''
+  };
+
+  function toast(msg, kind, sub) {
+    const el = document.createElement('div');
+    el.className = 'toast' + (kind ? ' ' + kind : '');
+    el.innerHTML = `<div>${msg}</div>${sub ? `<div class="small">${sub}</div>` : ''}`;
+    document.getElementById('toasts').appendChild(el);
+    setTimeout(() => el.remove(), 5500);
+  }
+
+  /* Settings drawer */
+  const drawer = document.getElementById('drawer');
+  const scrim  = document.getElementById('scrim');
+  function openDrawer() {
+    document.getElementById('cfgOwner').value  = cfg.owner;
+    document.getElementById('cfgRepo').value   = cfg.repo;
+    document.getElementById('cfgBranch').value = cfg.branch;
+    document.getElementById('cfgToken').value  = cfg.token;
+    drawer.classList.add('is-open'); scrim.classList.add('is-open');
+  }
+  function closeDrawer() { drawer.classList.remove('is-open'); scrim.classList.remove('is-open'); }
+  document.getElementById('settingsBtn').addEventListener('click', openDrawer);
+  document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+  scrim.addEventListener('click', closeDrawer);
+  document.getElementById('cfgSave').addEventListener('click', () => {
+    cfg.owner  = document.getElementById('cfgOwner').value.trim()  || 'goktug-adm';
+    cfg.repo   = document.getElementById('cfgRepo').value.trim()   || 'portfolio';
+    cfg.branch = document.getElementById('cfgBranch').value.trim() || 'main';
+    cfg.token  = document.getElementById('cfgToken').value.trim();
+    localStorage.setItem('gh_owner',  cfg.owner);
+    localStorage.setItem('gh_repo',   cfg.repo);
+    localStorage.setItem('gh_branch', cfg.branch);
+    if (cfg.token) localStorage.setItem('gh_token', cfg.token);
+    updateSettingsBtn(); closeDrawer(); toast('Settings saved', 'ok');
+  });
+  document.getElementById('cfgForget').addEventListener('click', () => {
+    cfg.token = ''; localStorage.removeItem('gh_token');
+    document.getElementById('cfgToken').value = '';
+    updateSettingsBtn(); toast('Token cleared');
+  });
+  document.getElementById('cfgTest').addEventListener('click', async () => {
+    const t = document.getElementById('cfgToken').value.trim() || cfg.token;
+    if (!t) return toast('No token', 'err');
+    try {
+      const r = await fetch(`https://api.github.com/repos/${cfg.owner}/${cfg.repo}`, {
+        headers: { Authorization: 'token ' + t, Accept: 'application/vnd.github+json' }
+      });
+      if (r.ok) {
+        const j = await r.json();
+        toast('Connected ✓', 'ok', `${j.full_name} · push: ${j.permissions?.push ? 'yes' : 'no'}`);
+      } else {
+        toast('GitHub: ' + r.status, 'err', (await r.text()).slice(0, 120));
+      }
+    } catch (e) { toast('Network error', 'err', e.message); }
+  });
+  function updateSettingsBtn() {
+    const btn = document.getElementById('settingsBtn');
+    btn.classList.toggle('is-set', !!cfg.token);
+    btn.classList.toggle('is-unset', !cfg.token);
+    btn.title = cfg.token ? 'GitHub configured' : 'Set up GitHub upload';
+  }
+  updateSettingsBtn();
+
+  /* Selection logic */
+  function loadCurrent() {
+    Object.keys(state).forEach(k => state[k] = new Set());
+    Object.keys(covers).forEach(k => delete covers[k]);
+    const cur = window.SELECTIONS || {};
+    for (const slug in cur) state[slug] = new Set(cur[slug]);
+    const cov = window.COVERS || {};
+    for (const slug in cov) covers[slug] = cov[slug];
+    render();
+  }
+  function clearAll() { Object.keys(state).forEach(k => state[k] = new Set()); render(); }
+  function selectAll(slug) {
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    state[slug] = new Set([...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])]);
+    render();
+  }
+  function selectFigures(slug) {
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    state[slug] = new Set([...(idx.figures || []), ...(idx.custom || [])]);
+    render();
+  }
+  function selectNone(slug) { state[slug] = new Set(); render(); }
+  function toggle(slug, path) {
+    if (!state[slug]) state[slug] = new Set();
+    if (state[slug].has(path)) state[slug].delete(path); else state[slug].add(path);
+    render();
+  }
+  function setCover(slug, path) {
+    if (covers[slug] === path) delete covers[slug];     // toggle off
+    else covers[slug] = path;
+    render();
+  }
+  // Expose for inline onclick handlers
+  window.setCover = setCover;
+
+  function render() {
+    let totalSel = 0, projWith = 0;
+    for (const slug in state) {
+      if (state[slug] && state[slug].size > 0) { totalSel += state[slug].size; projWith++; }
+    }
+    document.getElementById('stats').textContent =
+      `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+
+    const html = window.PROJECTS.map(p => {
+      const idx = localIndex.find(x => x.slug === p.slug)
+                || { figures: [], pages: [], custom: [] };
+      const selected = state[p.slug] || new Set();
+      const all = [
+        ...(idx.custom  || []).map(f => ({ path: f, kind: 'custom' })),
+        ...(idx.figures || []).map(f => ({ path: f, kind: 'fig' })),
+        ...(idx.pages   || []).map(f => ({ path: f, kind: 'page' }))
+      ];
+      const curCover = covers[p.slug];
+      const tiles = all.map(t => {
+        const isSel = selected.has(t.path);
+        const isCover = curCover === t.path;
+        const name = t.path.split('/').pop();
+        const kindLabel = t.kind === 'custom' ? 'custom' : (t.kind === 'fig' ? 'figure' : 'page');
+        const safePath = t.path.replace(/'/g, "\\'");
+        const trashBtn = t.kind === 'custom'
+          ? `<button class="trash-btn" title="Delete file from GitHub"
+                     onclick="event.stopPropagation(); deleteCustom('${p.slug}', '${safePath}')">🗑</button>`
+          : '';
+        return `
+          <div class="picker-tile ${isSel ? 'is-selected' : ''} ${t.kind === 'custom' ? 'is-custom' : ''} ${isCover ? 'is-cover' : ''}" data-slug="${p.slug}" data-path="${t.path}">
+            <div class="badge-check"></div>
+            <button class="cover-btn ${isCover ? 'is-on' : ''}"
+                    title="${isCover ? 'Remove as home-card cover' : 'Use as home-card cover'}"
+                    onclick="event.stopPropagation(); setCover('${p.slug}', '${safePath}')">★</button>
+            ${trashBtn}
+            <img src="${t.path}" alt="" loading="lazy">
+            <div class="meta"><span>${name}</span><span class="kind ${t.kind === 'custom' ? 'custom' : ''}">${kindLabel}</span></div>
+          </div>`;
+      }).join('');
+
+      return `
+        <section class="picker-section" id="sec-${p.slug}">
+          <h2>
+            ${p.title}
+            <span class="slug">${p.slug}</span>
+            <span class="count">${selected.size} / ${all.length} selected</span>
+          </h2>
+          <div class="picker-controls">
+            <button onclick="selectFigures('${p.slug}')">Select figures + custom</button>
+            <button onclick="selectAll('${p.slug}')">Select all</button>
+            <button onclick="selectNone('${p.slug}')">Clear</button>
+          </div>
+          ${all.length === 0
+            ? '<p style="color:var(--muted);font-size:13px;margin:0">No images yet — drop one in below.</p>'
+            : `<div class="picker-grid" id="grid-${p.slug}">${tiles}</div>`}
+          <label class="dropzone" data-slug="${p.slug}">
+            <strong>Drag images here</strong> or click to choose · uploads to <code>custom/${p.slug}/</code>
+            <div class="dropzone-hint">JPG / PNG / WebP · auto-pushed to GitHub when token is set</div>
+            <input type="file" multiple accept="image/jpeg,image/png,image/webp">
+          </label>
+        </section>`;
+    }).join('');
+
+    document.getElementById('sections').innerHTML = html;
+    document.getElementById('jump').innerHTML = window.PROJECTS.map(p =>
+      `<a href="#sec-${p.slug}">${p.slug}</a>`).join('');
+
+    document.querySelectorAll('.picker-tile').forEach(t => {
+      t.addEventListener('click', () => toggle(t.dataset.slug, t.dataset.path));
+    });
+    document.querySelectorAll('.dropzone').forEach(dz => {
+      const slug = dz.dataset.slug;
+      const inp  = dz.querySelector('input');
+      inp.addEventListener('change', e => handleFiles(slug, e.target.files));
+      dz.addEventListener('dragenter', e => { e.preventDefault(); dz.classList.add('is-dragover'); });
+      dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('is-dragover'); });
+      dz.addEventListener('dragleave', e => { dz.classList.remove('is-dragover'); });
+      dz.addEventListener('drop',      e => {
+        e.preventDefault(); dz.classList.remove('is-dragover');
+        handleFiles(slug, e.dataTransfer.files);
+      });
+    });
+  }
+
+  /* Upload to GitHub */
+  function safeName(orig) {
+    const ext = orig.split('.').pop().toLowerCase();
+    const base = orig.replace(/\.[^.]+$/, '')
+      .replace(/[^a-zA-Z0-9-_]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'img';
+    return `${base}-${Date.now().toString(36)}.${ext}`;
+  }
+  function readAsBase64(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result.slice(r.result.indexOf(',') + 1));
+      r.onerror = rej;
+      r.readAsDataURL(file);
+    });
+  }
+  async function ghDelete(path, message) {
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
+    const head = await fetch(url + '?ref=' + cfg.branch, {
+      headers: { Authorization: 'token ' + cfg.token, Accept: 'application/vnd.github+json' },
+      cache: 'no-store'
+    });
+    if (!head.ok) throw new Error('Cannot find file: ' + head.status);
+    const sha = (await head.json()).sha;
+    const r = await fetch(url, {
+      method: 'DELETE',
+      headers: {
+        Authorization: 'token ' + cfg.token,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ message, sha, branch: cfg.branch })
+    });
+    if (!r.ok) throw new Error(`${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  }
+
+  async function deleteCustom(slug, path) {
+    const name = path.split('/').pop();
+    if (!confirm(`Delete this image from the repo?\n\n${name}\n\nThis cannot be undone.`)) return;
+    if (!cfg.token) return toast('Set up GitHub token first (⚙)', 'err');
+
+    try {
+      await ghDelete(path, `Delete custom image ${name} from ${slug}`);
+
+      // Remove from local index
+      const idx = localIndex.find(p => p.slug === slug);
+      if (idx && idx.custom) idx.custom = idx.custom.filter(p => p !== path);
+
+      // Remove from selections + covers if pinned
+      let touched = false;
+      if (state[slug] && state[slug].has(path)) { state[slug].delete(path); touched = true; }
+      if (covers[slug] === path) { delete covers[slug]; touched = true; }
+
+      // Update image-index.js
+      try {
+        const body = btoa(unescape(encodeURIComponent(rebuildIndexJs())));
+        await ghPut('image-index.js', body, `Update image-index.js (-1 ${slug})`);
+      } catch (e) {
+        toast('image-index.js update warned', 'err', e.message);
+      }
+
+      // If selections/covers were affected, push selections.js too
+      if (touched) {
+        try {
+          const txt = buildSelectionsJs();
+          const b64 = btoa(unescape(encodeURIComponent(txt)));
+          await ghPut('selections.js', b64, `Update selections.js (-1 ${slug})`);
+        } catch (e) {
+          toast('selections.js update warned', 'err', e.message);
+        }
+      }
+
+      toast('Deleted ' + name, 'ok', slug);
+      render();
+    } catch (e) {
+      toast('Delete failed', 'err', e.message);
+    }
+  }
+  window.deleteCustom = deleteCustom;
+
+  async function ghPut(path, contentB64, message, retried) {
+    const url = `https://api.github.com/repos/${cfg.owner}/${cfg.repo}/contents/${encodeURI(path)}`;
+    // Always re-fetch the latest sha right before the PUT — protects against
+    // anyone (including a different tab or my git push) bumping the file.
+    let sha = null;
+    const head = await fetch(url + '?ref=' + cfg.branch, {
+      headers: { Authorization: 'token ' + cfg.token, Accept: 'application/vnd.github+json' },
+      cache: 'no-store'
+    });
+    if (head.ok) sha = (await head.json()).sha;
+    const body = { message, content: contentB64, branch: cfg.branch };
+    if (sha) body.sha = sha;
+    const r = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        Authorization: 'token ' + cfg.token,
+        Accept: 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (r.status === 409 && !retried) {
+      // SHA conflict — fetch fresh sha and retry exactly once
+      await new Promise(r => setTimeout(r, 400));
+      return ghPut(path, contentB64, message, true);
+    }
+    if (!r.ok) throw new Error(`${r.status}: ${(await r.text()).slice(0, 200)}`);
+    return r.json();
+  }
+  function rebuildIndexJs() {
+    const obj = localIndex.map(p => ({
+      slug: p.slug, figures: p.figures || [], pages: p.pages || [], custom: p.custom || []
+    }));
+    return 'window.IMAGE_INDEX = ' + JSON.stringify(obj) + ';\n';
+  }
+  function buildSelectionsJs() {
+    const sel = {};
+    for (const slug in state) if (state[slug] && state[slug].size > 0) sel[slug] = [...state[slug]];
+    const cov = {};
+    for (const slug in covers) if (covers[slug]) cov[slug] = covers[slug];
+    return [
+      '// =====================================================================',
+      '//  selections.js — generated by picker.html',
+      '//  SELECTIONS = sidebar mini-gallery on the project detail page.',
+      '//  COVERS     = home-page card cover image, one per project.',
+      '// =====================================================================',
+      'window.SELECTIONS = ' + JSON.stringify(sel, null, 2) + ';',
+      '',
+      'window.COVERS = ' + JSON.stringify(cov, null, 2) + ';',
+      ''
+    ].join('\n');
+  }
+
+  async function handleFiles(slug, fileList) {
+    const files = [...fileList];
+    if (!files.length) return;
+    if (!cfg.token) {
+      toast('Set up GitHub token first (⚙ top right)', 'err',
+            'Or download selections.js + drop files into custom/ manually.');
+      return;
+    }
+    const idx = localIndex.find(p => p.slug === slug);
+    if (!idx) return;
+    idx.custom = idx.custom || [];
+
+    const grid = document.getElementById('grid-' + slug)
+      || (() => {
+        const sec = document.getElementById('sec-' + slug);
+        const newGrid = document.createElement('div');
+        newGrid.className = 'picker-grid';
+        newGrid.id = 'grid-' + slug;
+        sec.querySelector('.picker-controls').after(newGrid);
+        return newGrid;
+      })();
+
+    const newPaths = [];
+    for (const file of files) {
+      const filename = safeName(file.name);
+      const path = `custom/${slug}/${filename}`;
+      const previewUrl = URL.createObjectURL(file);
+
+      const tile = document.createElement('div');
+      tile.className = 'picker-tile is-custom is-uploading';
+      tile.dataset.slug = slug;
+      tile.dataset.path = path;
+      tile.innerHTML = `
+        <div class="badge-check"></div>
+        <img src="${previewUrl}" alt="">
+        <div class="upload-overlay">UPLOADING…</div>
+        <div class="meta"><span>${filename}</span><span class="kind custom">custom</span></div>`;
+      grid.prepend(tile);
+
+      try {
+        const b64 = await readAsBase64(file);
+        await ghPut(path, b64, `Add custom image ${filename} for ${slug}`);
+        tile.classList.remove('is-uploading');
+        tile.querySelector('.upload-overlay')?.remove();
+        tile.classList.add('is-selected');
+        tile.addEventListener('click', () => toggle(slug, path));
+        idx.custom.push(path);
+        if (!state[slug]) state[slug] = new Set();
+        state[slug].add(path);
+        newPaths.push(path);
+        toast('Uploaded ' + filename, 'ok', slug);
+      } catch (e) {
+        tile.classList.remove('is-uploading');
+        tile.classList.add('upload-failed');
+        tile.querySelector('.upload-overlay').textContent = 'FAILED';
+        toast('Upload failed: ' + filename, 'err', e.message);
+      }
+    }
+
+    if (newPaths.length) {
+      try {
+        const body = btoa(unescape(encodeURIComponent(rebuildIndexJs())));
+        await ghPut('image-index.js', body, `Update image-index.js (+${newPaths.length} custom)`);
+        toast('image-index.js updated', 'ok', 'Site rebuild starts in a few seconds.');
+      } catch (e) {
+        toast('Could not update image-index.js', 'err', e.message);
+      }
+    }
+
+    let totalSel = 0, projWith = 0;
+    for (const k in state) if (state[k] && state[k].size > 0) { totalSel += state[k].size; projWith++; }
+    document.getElementById('stats').textContent =
+      `${totalSel} selected across ${projWith} project${projWith === 1 ? '' : 's'}`;
+    const head = document.querySelector(`#sec-${slug} .count`);
+    const all = [...(idx.custom || []), ...(idx.figures || []), ...(idx.pages || [])];
+    if (head) head.textContent = `${(state[slug] || new Set()).size} / ${all.length} selected`;
+  }
+
+  document.getElementById('save').addEventListener('click', async () => {
+    if (!cfg.token) return toast('Set up token first', 'err', 'Use ⬇ Download as fallback');
+    const btn = document.getElementById('save');
+    btn.disabled = true; btn.textContent = '…pushing';
+    try {
+      const text = buildSelectionsJs();
+      const b64  = btoa(unescape(encodeURIComponent(text)));
+      await ghPut('selections.js', b64, 'Update selections.js via picker');
+      toast('selections.js pushed ✓', 'ok', 'Live in 30–60 seconds');
+    } catch (e) { toast('Push failed', 'err', e.message); }
+    finally { btn.disabled = false; btn.textContent = '⬆ Push selections'; }
+  });
+  document.getElementById('dl').addEventListener('click', () => {
+    const blob = new Blob([buildSelectionsJs()], { type: 'application/javascript' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'selections.js'; a.click();
+    URL.revokeObjectURL(url);
+  });
+  document.getElementById('copy').addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(buildSelectionsJs()); toast('Copied to clipboard', 'ok'); }
+    catch (e) { toast('Copy failed', 'err', e.message); }
+  });
+  document.getElementById('loadCurrent').addEventListener('click', loadCurrent);
+  document.getElementById('clearAll').addEventListener('click', clearAll);
+
+  loadCurrent();
+</script>
+</body>
+</html>
